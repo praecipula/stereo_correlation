@@ -16,7 +16,9 @@ imagecamera2d.cpp \
 stereocorrelation.cpp \
 qleftimagecanvaswidget.cpp \
 qrightimagecanvaswidget.cpp \
-qimagecanvaswidget.cpp
+qimagecanvaswidget.cpp \
+    strcon.cpp \
+    metatyperegistration.cpp
 
 HEADERS  += common.h \
 imagecamera2d.h \
@@ -24,6 +26,7 @@ stereocorrelation.h \
 qleftimagecanvaswidget.h \
 qrightimagecanvaswidget.h \
 qimagecanvaswidget.h \
-    metatype_includes.h
+    strcon.h \
+    metatyperegistration.h
 
 FORMS    += stereocorrelation.ui

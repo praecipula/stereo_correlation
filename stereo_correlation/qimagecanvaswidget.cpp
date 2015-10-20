@@ -2,9 +2,12 @@
 #include <qImage>
 #include "qimagecanvaswidget.h"
 #include <QWheelEvent>
+#include "strcon.h"
+
+const QPoint QImageCanvasWidget::s_noPoint(-1, -1);
 
 QImageCanvasWidget::QImageCanvasWidget(QWidget * parent, Qt::WindowFlags f) :
-    QOpenGLWidget(parent, f), m_textureHandle(), m_dimensions(), m_imageCamera()
+    QOpenGLWidget(parent, f), m_textureHandle(), m_dimensions(), m_imageCamera(), m_mousePressLocation(s_noPoint), m_imageCenterLocation(s_noPoint)
 {
     // Initialization
     this->m_filePath = filename_ptr(new std::string(""));
@@ -48,6 +51,45 @@ void QImageCanvasWidget::wheelEvent(QWheelEvent* event)
     event->delta() > 0 ? m_imageCamera.increaseZoom() : m_imageCamera.decreaseZoom();
     emit cameraModelChanged(m_imageCamera);
     update();
+}
+
+void QImageCanvasWidget::mousePressEvent(QMouseEvent *event)
+{
+    // Put the location of the mouse press in the mouse press location variable
+    LOGV << "Mouse click in image canvas widget: " << event->x() << 'x' << event->y();
+    m_mousePressLocation = event->pos();
+    m_imageCenterLocation = m_imageCamera.getCenter();
+}
+
+void QImageCanvasWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    // unset the mouse press location
+    LOGV << "Mouse released in image canvas widget";
+    m_mousePressLocation = s_noPoint;
+}
+
+void QImageCanvasWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    // If we're in a pressed state
+    if (m_mousePressLocation != s_noPoint)
+    {
+        // get the scaled distance since press
+        QPoint delta(QPoint(event->x(), event->y()) - m_mousePressLocation);
+        QPoint scaledDelta(m_imageCamera.calculateScaledDelta(delta));
+        // We need to convert from screen coordinates (x+right, y+down) to OpenGL coordinates (x+right, y+up)
+        // But there's a wrinkle! We would be then telling the camera to move in the same location as the mouse.
+        // Think of a jeweler's loupe or a microscope moving across the surface: if we went in the same direction,
+        // we'd be moving the viewer and not the image. We want the feeling of picking up and moving the image.
+        // Therefore, we double-invert: we want the inverse sense of X and Y in OpenGL to move the camera such
+        // that the image appears to move correctly.
+        QPoint coordinateCorrectDelta = QPoint(-scaledDelta.x(), scaledDelta.y());
+        QPoint centerpoint(m_imageCenterLocation + coordinateCorrectDelta);
+        LOGV << "Click and drag: from " << StrCon(m_mousePressLocation) << " to " << StrCon(event->pos()) << " (scaled) " << StrCon(scaledDelta);
+        m_imageCamera.adjustCenter(centerpoint.x(), centerpoint.y());
+        emit cameraModelChanged(m_imageCamera);
+        update();
+    }
+
 }
 
 void QImageCanvasWidget::initializeGL()

@@ -29,6 +29,8 @@ class QImageCanvasWidget: public QOpenGLWidget, protected QOpenGLFunctions
   public:
     typedef boost::shared_ptr<std::string> filename_ptr;
     typedef boost::shared_ptr<QOpenGLTexture> texture_ptr;
+    // Sentinel value. Ehh.
+    static const QPoint s_noPoint;
 
     /********
      * Object functions
@@ -64,7 +66,14 @@ class QImageCanvasWidget: public QOpenGLWidget, protected QOpenGLFunctions
     /********
      * Overrides
      *******/
+    // On the mouse wheel, we zoom in and out with the camera
     void wheelEvent(QWheelEvent* event);
+    // On mouse press, we begin dragging the camera to pan
+    void mousePressEvent(QMouseEvent* event);
+    // On mouse release, we stop dragging and update the sibling camera
+    void mouseReleaseEvent(QMouseEvent* event);
+    // On mouse move, we update a cursur/reticle if appropriate.
+    void mouseMoveEvent(QMouseEvent* event);
 
     /*******
      * Signals and slots
@@ -94,8 +103,13 @@ signals:
       int width;
       int height;
     };
+    
     image_dimensions m_dimensions;
     ImageCamera2d m_imageCamera;
+    // The screen coordinates on mouse click
+    QPoint m_mousePressLocation;
+    // The image coordinates on mouse click
+    QPoint m_imageCenterLocation;
 
 };
 

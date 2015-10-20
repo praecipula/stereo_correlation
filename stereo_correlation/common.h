@@ -4,6 +4,7 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <plog/Log.h>
+#include "metatyperegistration.h"
 
 namespace Stereo
 {
@@ -13,8 +14,10 @@ inline void initialize()
     if (!QDir(appdata).exists())
     {
         QDir().mkdir(appdata);
+        MetatypeRegistration reg;
+        reg.doRegistration();
     }
-    plog::init(plog::debug,
+    plog::init(plog::verbose,
                (appdata + "/log.txt").toStdString().data());
 }
 

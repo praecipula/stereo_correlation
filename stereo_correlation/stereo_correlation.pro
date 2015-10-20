@@ -23,6 +23,7 @@ imagecamera2d.h \
 stereocorrelation.h \
 qleftimagecanvaswidget.h \
 qrightimagecanvaswidget.h \
-qimagecanvaswidget.h
+qimagecanvaswidget.h \
+    metatype_includes.h
 
 FORMS    += stereocorrelation.ui

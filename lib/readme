@@ -1,2 +1,0 @@
-To simplify things for the sake of "just getting it working", I decided to symlink
-in any files that we need to include here. The reason is that adding, for example, /usr/local/include to the include path tries to cross-link Qt with the Qt 4 headers, which is not what is desired. Instead, I'm plucking out symlinks here so that we don't accidentally overinclude files that we don't want to. Not the best solution, but a working one.

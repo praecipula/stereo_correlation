@@ -2,6 +2,7 @@
 #define STEREOCORRELATION_H
 
 #include <QMainWindow>
+#include "common.h"
 
 namespace Ui {
 class StereoCorrelation;

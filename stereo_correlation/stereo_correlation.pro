@@ -4,23 +4,25 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui widgets
 
 TARGET = stereo_correlation
 TEMPLATE = app
 
-INCLUDEPATH += ../lib/headers
-LIBS += "-L../lib/lib"
+INCLUDEPATH += ../thirdparty/include
 
 SOURCES += main.cpp\
-        stereocorrelation.cpp \
-    qleftimagecanvaswidget.cpp \
-    qimagecanvaswidget.cpp
+imagecamera2d.cpp \
+stereocorrelation.cpp \
+qleftimagecanvaswidget.cpp \
+qrightimagecanvaswidget.cpp \
+qimagecanvaswidget.cpp
 
-HEADERS  += stereocorrelation.h \
-    qleftimagecanvaswidget.h \
-    qimagecanvaswidget.h
+HEADERS  += common.h \
+imagecamera2d.h \
+stereocorrelation.h \
+qleftimagecanvaswidget.h \
+qrightimagecanvaswidget.h \
+qimagecanvaswidget.h
 
 FORMS    += stereocorrelation.ui

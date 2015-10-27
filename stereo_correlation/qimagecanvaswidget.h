@@ -9,6 +9,7 @@
 #include <QFileDialog>
 
 #include "imagecamera2d.h"
+#include "reticle.h"
 
 /*
  * The image canvas widget is the controller for all things to do with
@@ -87,10 +88,12 @@ class QImageCanvasWidget: public QOpenGLWidget, protected QOpenGLFunctions
     // This means we need to register the ImageCamera, or at least a params class,
     // with the metaclass system.
     void updateCameraModel(ImageCamera2d desiredCameraModel);
+    void updateReticleLocation(Reticle desiredReticle);
 signals:
     void imagePathChanged();
     void imageTextureChanged();
     void cameraModelChanged(ImageCamera2d changed);
+    void reticleLocationChanged(Reticle changed);
 
     /********
      * Member variables
@@ -106,6 +109,7 @@ signals:
     
     image_dimensions m_dimensions;
     ImageCamera2d m_imageCamera;
+    Reticle m_reticle;
     // The screen coordinates on mouse click
     QPoint m_mousePressLocation;
     // The image coordinates on mouse click

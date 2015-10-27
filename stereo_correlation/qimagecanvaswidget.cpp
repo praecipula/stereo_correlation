@@ -3,11 +3,14 @@
 #include "qimagecanvaswidget.h"
 #include <QWheelEvent>
 #include "strcon.h"
+#include <Magick++/Image.h>
+#include "saveimage.h"
 
 const QPoint QImageCanvasWidget::s_noPoint(-1, -1);
 
 QImageCanvasWidget::QImageCanvasWidget(QWidget * parent, Qt::WindowFlags f) :
-    QOpenGLWidget(parent, f), m_textureHandle(), m_dimensions(), m_imageCamera(), m_mousePressLocation(s_noPoint), m_imageCenterLocation(s_noPoint)
+    QOpenGLWidget(parent, f), m_textureHandle(), m_dimensions(), m_imageCamera(), m_reticle(),
+  m_mousePressLocation(s_noPoint), m_imageCenterLocation(s_noPoint)
 {
     // Initialization
     this->m_filePath = filename_ptr(new std::string(""));
@@ -16,6 +19,8 @@ QImageCanvasWidget::QImageCanvasWidget(QWidget * parent, Qt::WindowFlags f) :
     connect(this, SIGNAL(imagePathChanged()), this, SLOT(updateImageTexture()));
     // When the texture updates, render
     connect(this, SIGNAL(imageTextureChanged()), this, SLOT(update()));
+    // There is no cursor on this widget (well, we define the cursor as the reticle)
+    setCursor(Qt::BlankCursor);
 }
 
 QImageCanvasWidget::~QImageCanvasWidget()
@@ -28,6 +33,7 @@ void QImageCanvasWidget::registerSiblingWidget(QImageCanvasWidget *otherWidget)
 {
     //When this sibling changes, the other sibling gets signals.
     connect(this, SIGNAL(cameraModelChanged(ImageCamera2d)), otherWidget, SLOT(updateCameraModel(ImageCamera2d)));
+    connect(this, SIGNAL(reticleLocationChanged(Reticle)), otherWidget, SLOT(updateReticleLocation(Reticle)));
 }
 
 void QImageCanvasWidget::updateCameraModel(ImageCamera2d otherCamera)
@@ -36,6 +42,11 @@ void QImageCanvasWidget::updateCameraModel(ImageCamera2d otherCamera)
     m_imageCamera = otherCamera;
     // We're responsible for updating after camera changes
     update();
+}
+
+void QImageCanvasWidget::updateReticleLocation(Reticle desiredReticle)
+{
+
 }
 
 QImageCanvasWidget::filename_ptr QImageCanvasWidget::changeImageFilePath(filename_ptr newFilePath)
@@ -90,12 +101,29 @@ void QImageCanvasWidget::mouseMoveEvent(QMouseEvent *event)
         update();
     }
 
+    // Correlate the center of the widget to the center of the image
+    QPoint widgetCenter(width() / 2, height() / 2);
+    // The delta in screen coordinates from center
+    QPoint delta(QPoint(event->x(), event->y()) - widgetCenter);
+    // The delta in modelspace from center
+    QPoint scaledDelta(m_imageCamera.calculateScaledDelta(delta));
+    // With correct coordinate flipping
+    QPoint coordinateCorrectDelta = QPoint(scaledDelta.x(), -scaledDelta.y());
+    //
+    QPoint reticlePoint(m_imageCamera.getCenter() + coordinateCorrectDelta);
+    m_reticle.moveTo(reticlePoint);
+    LOGV << "Updated";
+    update();
+
 }
 
 void QImageCanvasWidget::initializeGL()
 {
     initializeOpenGLFunctions();
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    m_reticle.initializeTexture();
 }
 
 void QImageCanvasWidget::resizeGL(int w, int h)
@@ -118,6 +146,7 @@ void QImageCanvasWidget::paintGL()
     // Red is pretty obvious as a background if we draw incorrectly
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     renderTextureCommands();
+    m_reticle.paintGL();
 
 }
 
@@ -160,8 +189,6 @@ void QImageCanvasWidget::updateImageTexture()
     m_textureHandle = texture_ptr(new QOpenGLTexture(image.mirrored()));
     // Reset the camera
     m_imageCamera.adjustCenter(image.width() / 2, image.height() / 2);
-    // This is a bit hacky.
-    resizeGL(this->width(), this->height());
     update();
     emit imageTextureChanged();
 }

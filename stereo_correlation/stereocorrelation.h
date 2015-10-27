@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "common.h"
+#include "imageprocessingview.h"
 
 namespace Ui {
 class StereoCorrelation;
@@ -18,6 +19,7 @@ public:
 
 private:
     Ui::StereoCorrelation *ui;
+    ImageProcessingView* m_processingView;
 };
 
 #endif // STEREOCORRELATION_H

@@ -16,6 +16,9 @@ StereoCorrelation::StereoCorrelation(QWidget *parent) :
     leftImageCanvas->registerSiblingWidget(rightImageCanvas);
     rightImageCanvas->registerSiblingWidget(leftImageCanvas);
 
+    // Show the pipeline display window
+    m_processingView = new ImageProcessingView();
+    m_processingView->show();
 
     LOGI << "Application initialized";
  
@@ -24,5 +27,7 @@ StereoCorrelation::StereoCorrelation(QWidget *parent) :
 StereoCorrelation::~StereoCorrelation()
 {
     LOGI << "Destructing main form";
+    delete m_processingView;
     delete ui;
 }
+

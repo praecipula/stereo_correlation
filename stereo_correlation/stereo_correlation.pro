@@ -8,6 +8,8 @@ QT       += core gui widgets
 
 QT_CONFIG -= no-pkg-config
 
+CONFIG += c++11
+
 TARGET = stereo_correlation
 TEMPLATE = app
 
@@ -26,7 +28,10 @@ qrightimagecanvaswidget.cpp \
 qimagecanvaswidget.cpp \
     strcon.cpp \
     metatyperegistration.cpp \
-    reticle.cpp
+    reticle.cpp \
+    imagepipelinestepbase.cpp \
+    saveimage.cpp \
+    imageprocessingview.cpp
 
 HEADERS  += common.h \
 imagecamera2d.h \
@@ -36,9 +41,13 @@ qrightimagecanvaswidget.h \
 qimagecanvaswidget.h \
     strcon.h \
     metatyperegistration.h \
-    reticle.h
+    reticle.h \
+    imagepipelinestepbase.h \
+    saveimage.h \
+    imageprocessingview.h
 
-FORMS    += stereocorrelation.ui
+FORMS    += stereocorrelation.ui \
+    imageprocessingview.ui
 
 # Copies the given files to the destination directory
 defineTest(copyToDestdir) {

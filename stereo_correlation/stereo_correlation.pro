@@ -31,7 +31,8 @@ qimagecanvaswidget.cpp \
     reticle.cpp \
     imagepipelinestepbase.cpp \
     saveimage.cpp \
-    imageprocessingview.cpp
+    imageprocessingview.cpp \
+    imagepipeline.cpp
 
 HEADERS  += common.h \
 imagecamera2d.h \
@@ -44,7 +45,8 @@ qimagecanvaswidget.h \
     reticle.h \
     imagepipelinestepbase.h \
     saveimage.h \
-    imageprocessingview.h
+    imageprocessingview.h \
+    imagepipeline.h
 
 FORMS    += stereocorrelation.ui \
     imageprocessingview.ui

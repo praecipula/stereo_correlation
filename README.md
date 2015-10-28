@@ -40,6 +40,13 @@ Stretch features:
 * Batch processing of frames from side-by-side movies for generation of 3d movies.
 * Generation of 3d scene from correlation data (construct geometry in OpenGL which allows small amounts of rotation and translation of the recreated scene)
 
+Project status:
+------
+
+I have just begun my port into C++ in my spare time, so there are definitely some things lacking. Documentation (other than this overview) and testing are abysmal in terms of completion - documentation is just notes to myself to remind me of what is going on, and testing is a visual comparison to the known good output as produced by the prototype. This is not due to a lack of caring or a lack of awareness, but rather a sprint to try to recreate this project to a similar completion level as the prototype, which will allow me to focus more time on quality standards and less on a dash to try to obsolete the prototype.
+
+Documentation will be handled with Doxygen, testing will likely use CppSpec.
+
 A deeper look into the features
 ------
 
@@ -149,4 +156,4 @@ All of the above features, when applied to a movie, with additional time-based t
 
 * Generation of 3d scene from correlation data (construct geometry in OpenGL which allows small amounts of rotation and translation of the recreated scene)
 
-Given the autocorrelation algorithm described above, if enough points of correlation can be found, a 3d scene can be recreated from the 2d images. The direction of horizontal shift from the view plane point (left or right) determines a point's forward or backward location in the 3d scene; the degree of horizontal shift (displacement in pixels) determines the degree of displacement from the image plane. These data can be used to create a mesh that can be textured with the images in order to recreate a 3d scene that can be slightly panned and tilted to recreate novel views of the original scene, within the limits of the displacement of the cameras to capture. This can be used to create an "advanced wigglegram", for instance, where the image can be smoothly animated between the left and right images, or displayed easily in hardware capable of displaying 3d scenes in stereo (e.g. Oculus Rift). This can also be used to shrink the interpupilary distance between images, or to simulate toe-in and parallel views of the eye, by rendering the scene with different camera parameters than the ones used to capture the original images.
+Given the autocorrelation algorithm described above, if enough points of correlation can be found, the degree of horizontal shift (displacement in pixels) for each point can determine the degree of displacement from the image plane. In other words, a correlation can be seen as two vectors projecting from the two cameras; assuming a model where the cameras are planar and separated by their interocular distance, these two vectors converge to intersect at the real-world location of the geometry. These data can be used to create a point cloud, which can be meshed and textured with the images in order to recreate a 3d scene that can be slightly panned and tilted to recreate novel views of the original scene, within the limits of the displacement of the original cameras to capture (otherwise, there will be no texture data available for occluded objects). This can be used for an interactive view, or create an "advanced wigglegram" where the image can be smoothly animated between the left and right images, or displayed easily in hardware capable of displaying 3d scenes in stereo (e.g. Oculus Rift). This can also be used to virtually shrink the interpupilary distance between images for closer or macro shots, or to simulate toe-in and parallel views of the eye, by rendering the scene with different camera parameters than the ones used to capture the original images.

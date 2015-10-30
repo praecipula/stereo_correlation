@@ -43,7 +43,7 @@ Stretch features:
 Project status:
 ------
 
-I have just begun my port into C++ in my spare time, so there are definitely some things lacking. Documentation (other than this overview) and testing are abysmal in terms of completion - documentation is just notes to myself to remind me of what is going on, and testing is a visual comparison to the known good output as produced by the prototype. This is not due to a lack of caring or a lack of awareness, but rather a sprint to try to recreate this project to a similar completion level as the prototype, which will allow me to focus more time on quality standards and less on a dash to try to obsolete the prototype.
+I have just begun my port into C++ in my spare time, so there are definitely some things lacking. Documentation (other than this overview) and testing are abysmal in terms of completion - documentation is just notes to myself to remind me of what is going on, and testing is a visual comparison to the known good output as produced by the prototype. This is not due to a lack of caring or a lack of awareness, but rather a sprint to try to recreate this project to a similar completion level as the prototype, which will allow me to focus more time on quality standards and less on a dash to try to obsolete the prototype. In addition, the default project configuration was not to use the features of C++11; however, I believe that the libraries used are fully functional under C++11 and will port over to that version of the language at the same time.
 
 Documentation will be handled with Doxygen, testing will likely use CppSpec.
 

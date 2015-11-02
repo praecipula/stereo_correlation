@@ -1,4 +1,7 @@
 #include "imagepipelinestepbase.h"
 
-ImagePipelineStepBase::ImagePipelineStepBase()
-{}
+namespace Stereo
+{
+    ImagePipelineStepBase::ImagePipelineStepBase()
+    {}
+}

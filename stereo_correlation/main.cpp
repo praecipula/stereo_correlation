@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    StereoCorrelation w;
+    Stereo::StereoCorrelation w;
     w.show();
 
 

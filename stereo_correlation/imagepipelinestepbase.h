@@ -7,12 +7,15 @@
 
 //forward-declare
 namespace Magick {
-  class Image;
-};
+    class Image;
+}
 
-class ImagePipelineStepBase
+namespace Stereo
 {
-public:
+
+  class ImagePipelineStepBase
+  {
+  public:
 
     // The pipeline is assembled as a std List or Vector (anything forward iterable) of these pointers.
     typedef boost::shared_ptr<ImagePipelineStepBase> ptr;
@@ -29,6 +32,7 @@ public:
      */
     virtual image_list execute(const image_list& inputs) = 0;
 
-};
+  };
 
+}
 #endif // IMAGEPIPELINESTEPBASE_H

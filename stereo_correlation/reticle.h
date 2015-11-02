@@ -8,9 +8,12 @@
 #include <QOpenGLTexture>
 #include "boost/shared_ptr.hpp"
 
-class Reticle
+namespace Stereo
 {
-public:
+
+  class Reticle
+  {
+  public:
     static const QPoint s_noPoint;
     static const QPoint s_hotSpot;
     typedef boost::shared_ptr<QOpenGLTexture> texture_ptr;
@@ -21,13 +24,15 @@ public:
     void moveTo(const QPoint& coords);
     void paintGL();
 
-private:
+  private:
     QPoint m_location;
     QPoint m_dimensions;
     QColor m_color;
     texture_ptr m_texture;
-};
+  };
 
-Q_DECLARE_METATYPE(Reticle)
+}
+
+Q_DECLARE_METATYPE(Stereo::Reticle)
 
 #endif // RETICLE_H

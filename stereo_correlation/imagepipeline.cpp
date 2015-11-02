@@ -1,7 +1,10 @@
 #include "imagepipeline.h"
 
-ImagePipeline::ImagePipeline()
+namespace Stereo
 {
 
-}
+    ImagePipeline::ImagePipeline()
+    {
 
+    }
+}

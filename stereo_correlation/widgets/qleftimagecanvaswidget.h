@@ -4,10 +4,13 @@
 #include "qimagecanvaswidget.h"
 #include "strcon.h"
 
-class QLeftImageCanvasWidget: public QImageCanvasWidget
+namespace Stereo
 {
+
+  class QLeftImageCanvasWidget: public QImageCanvasWidget
+  {
     Q_OBJECT
-public:
+  public:
     QLeftImageCanvasWidget(QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual ~QLeftImageCanvasWidget(){}
 
@@ -15,10 +18,11 @@ public:
 
     virtual filename_ptr changeImageFilePath(filename_ptr newFilePath);
 
-signals:
+  signals:
     void leftImageFilenameChanged(QString newFilename);
 
-};
+  };
 
+}
 #endif // QLEFTIMAGECANVASWIDGET
 

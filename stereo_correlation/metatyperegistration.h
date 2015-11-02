@@ -2,14 +2,18 @@
 #define METATYPEREGISTRATION_H
 
 
-class MetatypeRegistration
+namespace Stereo
 {
-public:
+
+  class MetatypeRegistration
+  {
+  public:
     MetatypeRegistration();
 
-public:
+  public:
 
     static void doRegistration();
-};
+  };
 
+}
 #endif // METATYPEREGISTRATION_H

@@ -7,6 +7,10 @@
 // forward declarations
 class QPoint;
 
+
+namespace Stereo
+{
+
 /* StrCon is essentially some string conversion routines for convenience.
  * I may migrate these over to macros, but I'm not performance limited at
  * this point, and it's kind of nice to have some of the built-in
@@ -32,4 +36,5 @@ private:
     std::string m_str;
 };
 
+}
 #endif // STRCON_H

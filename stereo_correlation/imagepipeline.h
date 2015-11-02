@@ -1,7 +1,10 @@
 #ifndef IMAGEPIPELINE_H
 #define IMAGEPIPELINE_H
 
-/**
+namespace Stereo
+{
+
+    /**
  * @brief The ImagePipeline class is the central location to manage incoming signals and calculate what
  * needs to be done to an image in order to properly process it. It constructs a set of operations, which
  * act through the ImagePipeline as mediator in order to determine what exactly should be done to a pair
@@ -17,10 +20,11 @@
  * what operations are interesting or intended for it to execute in order to produce an anaglyph which best
  * represents the image. Note that not all operations have meaning to all post-processors, nor do
  */
-class ImagePipeline
-{
-public:
-    ImagePipeline();
-};
+    class ImagePipeline
+    {
+    public:
+      ImagePipeline();
+    };
 
+}
 #endif // IMAGEPIPELINE_H

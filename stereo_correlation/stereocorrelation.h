@@ -6,20 +6,24 @@
 #include "imageprocessingview.h"
 
 namespace Ui {
-class StereoCorrelation;
+    class StereoCorrelation;
 }
 
-class StereoCorrelation : public QMainWindow
+namespace Stereo
 {
+
+  class StereoCorrelation : public QMainWindow
+  {
     Q_OBJECT
 
-public:
+  public:
     explicit StereoCorrelation(QWidget *parent = 0);
     ~StereoCorrelation();
 
-private:
+  private:
     Ui::StereoCorrelation *ui;
     ImageProcessingView* m_processingView;
-};
+  };
 
+}
 #endif // STEREOCORRELATION_H

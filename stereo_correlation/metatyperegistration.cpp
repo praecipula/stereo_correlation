@@ -4,14 +4,17 @@
 #include "imagecamera2d.h"
 #include "reticle.h"
 
-MetatypeRegistration::MetatypeRegistration()
+namespace Stereo
 {
+    MetatypeRegistration::MetatypeRegistration()
+    {
 
-}
+    }
 
-void MetatypeRegistration::doRegistration()
-{
-    // Our metatypes
-    qRegisterMetaType<ImageCamera2d>();
-    qRegisterMetaType<Reticle>();
+    void MetatypeRegistration::doRegistration()
+    {
+      // Our metatypes
+      qRegisterMetaType<ImageCamera2d>();
+      qRegisterMetaType<Reticle>();
+    }
 }

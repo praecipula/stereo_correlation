@@ -56,7 +56,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QLeftImageCanvasWidget" name="leftImageCanvas">
+            <widget class="Stereo::QLeftImageCanvasWidget" name="leftImageCanvas">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -105,7 +105,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QRightImageCanvasWidget" name="rightImageCanvas">
+            <widget class="Stereo::QRightImageCanvasWidget" name="rightImageCanvas">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -172,17 +172,17 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QLeftImageCanvasWidget</class>
+   <class>Stereo::QLeftImageCanvasWidget</class>
    <extends>QOpenGLWidget</extends>
-   <header>qleftimagecanvaswidget.h</header>
+   <header>widgets/qleftimagecanvaswidget.h</header>
    <slots>
     <slot>updateImage()</slot>
    </slots>
   </customwidget>
   <customwidget>
-   <class>QRightImageCanvasWidget</class>
+   <class>Stereo::QRightImageCanvasWidget</class>
    <extends>QOpenGLWidget</extends>
-   <header>qrightimagecanvaswidget.h</header>
+   <header>widgets/qrightimagecanvaswidget.h</header>
    <slots>
     <slot>updateImage()</slot>
    </slots>

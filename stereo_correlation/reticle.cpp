@@ -3,37 +3,40 @@
 #include "common.h"
 #include <QCoreApplication>
 
-const QPoint Reticle::s_noPoint(-1, -1);
-const QPoint Reticle::s_hotSpot(20, 20);
-
-Reticle::Reticle():
-    m_location(s_noPoint), m_dimensions(s_noPoint), m_color(255, 255, 255, 255), m_texture()
+namespace Stereo
 {
-}
 
-void Reticle::initializeTexture()
-{
-    QString resourceImage = QCoreApplication::applicationDirPath() + "/../Resources/reticle.png";
-    QImage image = QImage(resourceImage);
-    m_texture = texture_ptr(new QOpenGLTexture(image.mirrored()));
-    m_dimensions = QPoint(image.width(), image.height());
-}
+    const QPoint Reticle::s_noPoint(-1, -1);
+    const QPoint Reticle::s_hotSpot(20, 20);
 
-void Reticle::moveTo(const QPoint &coords)
-{
-    m_location = coords;
-}
+    Reticle::Reticle():
+      m_location(s_noPoint), m_dimensions(s_noPoint), m_color(255, 255, 255, 255), m_texture()
+    {
+    }
 
-void Reticle::paintGL()
-{
-    /* The x,y coordinate of the reticle is stored in the location point,
+    void Reticle::initializeTexture()
+    {
+      QString resourceImage = QCoreApplication::applicationDirPath() + "/../Resources/reticle.png";
+      QImage image = QImage(resourceImage);
+      m_texture = texture_ptr(new QOpenGLTexture(image.mirrored()));
+      m_dimensions = QPoint(image.width(), image.height());
+    }
+
+    void Reticle::moveTo(const QPoint &coords)
+    {
+      m_location = coords;
+    }
+
+    void Reticle::paintGL()
+    {
+      /* The x,y coordinate of the reticle is stored in the location point,
      * but needs an offset in order to account for the fact that the hot spot is
      * not at the bottom-left of the texture.
      * The raw location would paint the bottom left coordinate, so we shift the
      * texture down and to the left - negatively - based on the hot spot location.
      */
-    QPoint glCoordinates = m_location - s_hotSpot;
-    if (m_texture) {
+      QPoint glCoordinates = m_location - s_hotSpot;
+      if (m_texture) {
         m_texture->bind();
         glPushMatrix();
         glLoadIdentity();
@@ -48,7 +51,8 @@ void Reticle::paintGL()
         glTexCoord2d(0.0,1.0); glVertex2d(0.0,m_dimensions.y());
         glEnd();
         glPopMatrix();
+      }
+
     }
 
 }
-

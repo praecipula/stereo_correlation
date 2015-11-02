@@ -23,33 +23,33 @@ INCLUDEPATH += ../thirdparty/include
 SOURCES += main.cpp\
 imagecamera2d.cpp \
 stereocorrelation.cpp \
-qleftimagecanvaswidget.cpp \
-qrightimagecanvaswidget.cpp \
-qimagecanvaswidget.cpp \
-    strcon.cpp \
-    metatyperegistration.cpp \
-    reticle.cpp \
-    imagepipelinestepbase.cpp \
-    saveimage.cpp \
-    imageprocessingview.cpp \
-    imagepipeline.cpp
+widgets/qleftimagecanvaswidget.cpp \
+widgets/qrightimagecanvaswidget.cpp \
+widgets/qimagecanvaswidget.cpp \
+strcon.cpp \
+metatyperegistration.cpp \
+reticle.cpp \
+imagepipelinestepbase.cpp \
+saveimage.cpp \
+imageprocessingview.cpp \
+imagepipeline.cpp
 
 HEADERS  += common.h \
 imagecamera2d.h \
 stereocorrelation.h \
-qleftimagecanvaswidget.h \
-qrightimagecanvaswidget.h \
-qimagecanvaswidget.h \
-    strcon.h \
-    metatyperegistration.h \
-    reticle.h \
-    imagepipelinestepbase.h \
-    saveimage.h \
-    imageprocessingview.h \
-    imagepipeline.h
+widgets/qleftimagecanvaswidget.h \
+widgets/qrightimagecanvaswidget.h \
+widgets/qimagecanvaswidget.h \
+strcon.h \
+metatyperegistration.h \
+reticle.h \
+imagepipelinestepbase.h \
+saveimage.h \
+imageprocessingview.h \
+imagepipeline.h
 
-FORMS    += stereocorrelation.ui \
-    imageprocessingview.ui
+FORMS    += forms/stereocorrelation.ui \
+forms/imageprocessingview.ui
 
 # Copies the given files to the destination directory
 defineTest(copyToDestdir) {

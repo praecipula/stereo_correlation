@@ -4,30 +4,35 @@
 #include <string>
 #include "imagepipelinestepbase.h"
 
-/* SaveImage is constructed with a filename, and assumes
+
+namespace Stereo
+{
+
+    /* SaveImage is constructed with a filename, and assumes
  * a single input image in its execute() step.
  */
-class SaveImage: public ImagePipelineStepBase
-{
-public:
-    /*
+    class SaveImage: public ImagePipelineStepBase
+    {
+    public:
+      /*
      * A delayed filename constructor, to prompt the user with a dialog
      * in order to save the image.
      */
-    SaveImage();
-    /*
+      SaveImage();
+      /*
      * Programmatic constructor for use where we know the filename ahead of time.
      */
-    SaveImage(const std::string& filename);
+      SaveImage(const std::string& filename);
 
-    virtual ~SaveImage(){}
+      virtual ~SaveImage(){}
 
-    void promptForFilename();
+      void promptForFilename();
 
-    virtual image_list execute(const image_list& inputs);
+      virtual image_list execute(const image_list& inputs);
 
-protected:
-    std::string m_filename;
-};
+    protected:
+      std::string m_filename;
+    };
 
+}
 #endif // SAVEIMAGE_H

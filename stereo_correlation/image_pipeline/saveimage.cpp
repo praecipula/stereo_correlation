@@ -6,14 +6,13 @@
 
 namespace Stereo
 {
-    SaveImage::SaveImage():
-      ImagePipelineStepBase(), m_filename()
+    SaveImage::SaveImage(const std::string filename):
+      ImagePipelineStepBase(), m_filename(filename)
     {}
 
-    SaveImage::SaveImage(const std::string& filename):
-      ImagePipelineStepBase(), m_filename(filename)
-    {
-    }
+    SaveImage::SaveImage(const SaveImage &other):
+        ImagePipelineStepBase(), m_filename(other.m_filename)
+    {}
 
     /*
  * Save the image at m_filename, and then return an empty image_list.

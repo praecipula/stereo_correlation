@@ -1,6 +1,9 @@
 #ifndef IMAGEPIPELINE_H
 #define IMAGEPIPELINE_H
 
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+
 namespace Stereo
 {
 
@@ -15,15 +18,19 @@ namespace Stereo
  * desired output. The ImagePipeline "listens" to the rest of the system in order to determine that certain
  * events (e.g. a dual-correlation being reached) should be used to create or modify a pipeline operation.
  *
- * This combination of pipeline operations, which are post-processor agnostic, can then be invoked by a post-
- * processor to compile a result. For instance, an Anaglyph post-processor can use the information to determine
- * what operations are interesting or intended for it to execute in order to produce an anaglyph which best
- * represents the image. Note that not all operations have meaning to all post-processors, nor do
+ * Pipeline steps are themselves agnostic of the type of 3d image that is being created. This allows for
+ * multiple pipelines to exist, or, more specifically, for ImagePipeline to exist as a tree. The tree will
+ * then be processed which allows, for instance, one common set of operations which fork to create an
+ * anaglyph and a JPS file from the same pipeline.
  */
     class ImagePipeline
     {
+        typedef boost::adjacency_list<boost::vecS, boost::setS, boost::directedS> graph;
+
     public:
       ImagePipeline();
+
+      graph m_graph;
     };
 
 }

@@ -29,10 +29,13 @@ widgets/qimagecanvaswidget.cpp \
 strcon.cpp \
 metatyperegistration.cpp \
 reticle.cpp \
-imagepipelinestepbase.cpp \
-saveimage.cpp \
+image_pipeline/imagepipelinestepbase.cpp \
+image_pipeline/saveimage.cpp \
 imageprocessingview.cpp \
-imagepipeline.cpp
+image_pipeline/imagepipeline.cpp \
+    image_pipeline/openimage.cpp \
+    image_pipeline/guiimagepipelinebuilder.cpp \
+    workspace.cpp
 
 HEADERS  += common.h \
 imagecamera2d.h \
@@ -43,10 +46,13 @@ widgets/qimagecanvaswidget.h \
 strcon.h \
 metatyperegistration.h \
 reticle.h \
-imagepipelinestepbase.h \
-saveimage.h \
+image_pipeline/imagepipelinestepbase.h \
+image_pipeline/saveimage.h \
 imageprocessingview.h \
-imagepipeline.h
+image_pipeline/imagepipeline.h \
+    image_pipeline/openimage.h \
+    image_pipeline/guiimagepipelinebuilder.h \
+    workspace.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

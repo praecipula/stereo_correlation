@@ -70,13 +70,18 @@
       <item>
        <layout class="QVBoxLayout" name="processingStepsLayout">
         <item>
-         <widget class="QListWidget" name="enabledOperations">
+         <widget class="QTreeWidget" name="processingSteps">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+           <sizepolicy hsizetype="Maximum" vsizetype="MinimumExpanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <column>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </column>
          </widget>
         </item>
         <item>

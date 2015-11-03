@@ -23,7 +23,14 @@ namespace Stereo
     typedef boost::shared_ptr<Magick::Image> image_ptr;
     typedef std::vector<image_ptr> image_list;
 
+    /*
+     * All image pipeline steps must be default-constructable AND copy-constructable.
+     * This class is always default-constructable as an abstract class.
+     * Any further information needed to execute must be supplied
+     * after construction and before execution
+     */
     ImagePipelineStepBase();
+    virtual ~ImagePipelineStepBase() {}
 
     /* An execution step takes one or more ImageMagick images and returns one or more transformed images.
      * Inheritors of this class have the option to either create new images or to transform an existing

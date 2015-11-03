@@ -3,7 +3,8 @@
 namespace Stereo
 {
 
-    ImagePipeline::ImagePipeline()
+    ImagePipeline::ImagePipeline():
+        m_graph()
     {
 
     }

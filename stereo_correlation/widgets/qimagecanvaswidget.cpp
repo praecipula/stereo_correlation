@@ -4,7 +4,6 @@
 #include <QWheelEvent>
 #include "strcon.h"
 #include <Magick++/Image.h>
-#include "saveimage.h"
 
 
 namespace Stereo

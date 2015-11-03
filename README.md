@@ -172,17 +172,17 @@ Therefore, the final algorithm for smooth geometry from a point cloud would be:
 
 1) Generate a disparity map using OpenCV. This disparity map will be generated with the [block matching](http://www.cs.cmu.edu/~motionplanning/papers/sbp_papers/integrated1/konolidge_stereo_vision.pdf) algorithm, which results in a fairly noisy set of correlations. Tune this algorithm to look for a certain level in reduction of noise, and use that as a first-step disparity calculation.
 
-2) Use OpenCV's feature detection algorithm to find features in each image.
+2) Use OpenCV's feature detection algorithm to find features (e.g. corners) in each image.
 
-3) Any features that lie in an area of relative smoothness in depth from the first image are classified as "interior" feature matches, and their depth is calculated as their average disparity from the disparity map.
+3) Any features that lie in an area of relative smoothness in depth from the disparity map are classified as "interior" feature matches, and their depth is calculated as their neighborhood-average disparity from the disparity map.
 
-4) Use the remaining features with the method described above: travel along the epiline of the feature in the other image, essentially horizontally, and find where there is a discontinuity to the left and right of the feature. Edges found with right-approaching similarities in color functions are left-foreground edges, and with left-approaching similarities are right-foreground edges. These points are "foreground edge" feature matches.
+4) Use the remaining features with the depth-aware edge detection method described above: travel along the epiline of the feature in the other image, essentially horizontally, and find where there is a discontinuity to the left and right of the feature. Edges found with right-approaching similarities in color functions are left-foreground edges, and with left-approaching similarities are right-foreground edges. These points are "foreground edge" feature matches.
 
-5) If possible, traveling further along the horizontal line towards the background direction may yield another feature match: where the background's color functions match above a certain threshold the limit from the background-side approach on the other image. This can provide a "background edge" feature match and further define the set of occluded pixels between the two images.
+5) If possible, traveling further along the epiline line towards the background direction may yield another feature match: where the background's color functions match the limit from the background-side approach on the other image. In other words, "jump" the occlusion in one image to find the point in the other image where the background abuts the edge. This can provide a "background edge" feature match and define the set of occluded pixels (and therefore local relative distance in depth) between the two images.
 
-6) All features now have a more-strictly defined depth than the disparity map alone, though they only represent a small subset of the pixels in the disparity map. Using splines constructed from these feature points, we can sharpen the disparity map (and/or iterate on this algorithm with a better set of inputs while creating the disparity map) in order to better define a sharp disparity buffer.
+6) All features now have a more-strictly defined depth than the disparity map alone, though they only represent a small subset of the pixels in the disparity map. Using, for example, splines constructed from these feature points, we can construct a filter to sharpen the disparity map (and/or iterate on this algorithm again with a better set of inputs while creating the disparity map) in order to better define a sharp disparity buffer.
 
-7) The cleaned disparity buffer can be tesselated in order to construct triangles which recreate the 3d image. Appropriate sampling of the images can supply the texture data to paint on the surfaces.
+7) The cleaned disparity buffer can be projected to create a point cloud and tesselated in order to construct triangles which recreate the 3d image. Appropriate sampling of the images can supply the texture data to paint on the surfaces.
 
 This can be used for an interactive view, or create an "advanced wigglegram" where the image can be smoothly animated between the left and right images, or displayed easily in hardware capable of displaying 3d scenes in stereo (e.g. Oculus Rift). This can also be used to virtually shrink the interpupilary distance between images for closer or macro shots, or to simulate toe-in and parallel views of the eye, by rendering the scene with different camera parameters than the ones used to capture the original images.
 

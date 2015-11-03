@@ -144,9 +144,9 @@ Status in native: 0%
 
 Having a correlation point that ties the images together and defines the view plane is one of the many artistic choices that can be made when compositing the images, but the process of finding such a point can be tedious. Pixel-level precision requires zooming into the image to accurately place the correlation point; but detail is lost to the eye at close approach. A method to assist in selecting correlation points would be of great benefit to the workflow.
 
-This is not a trivial problem, but as a college student, I took a graduate level class which enabled me to work on it and construct an algorithm. The basic idea is to find interesting potential correlation points, then look in the other image for similar color curves in a similar coordinate neighborhood around the selected point. These curves must assume discontinuity at the near vicinity of the point, since the geometry in the foreground is displaced against the background. Matches which hit above a user-supplied confidence level can be treated as potential alignment points.
+OpenCV has some built-in tools to assist in this step.
 
-Status in prototype: 0% (although an algorithm is known)
+Status in prototype: 0%
 
 Status in native: 0%
 
@@ -156,4 +156,33 @@ All of the above features, when applied to a movie, with additional time-based t
 
 * Generation of 3d scene from correlation data (construct geometry in OpenGL which allows small amounts of rotation and translation of the recreated scene)
 
-Given the autocorrelation algorithm described above, if enough points of correlation can be found, the degree of horizontal shift (displacement in pixels) for each point can determine the degree of displacement from the image plane. In other words, a correlation can be seen as two vectors projecting from the two cameras; assuming a model where the cameras are planar and separated by their interocular distance, these two vectors converge to intersect at the real-world location of the geometry. These data can be used to create a point cloud, which can be meshed and textured with the images in order to recreate a 3d scene that can be slightly panned and tilted to recreate novel views of the original scene, within the limits of the displacement of the original cameras to capture (otherwise, there will be no texture data available for occluded objects). This can be used for an interactive view, or create an "advanced wigglegram" where the image can be smoothly animated between the left and right images, or displayed easily in hardware capable of displaying 3d scenes in stereo (e.g. Oculus Rift). This can also be used to virtually shrink the interpupilary distance between images for closer or macro shots, or to simulate toe-in and parallel views of the eye, by rendering the scene with different camera parameters than the ones used to capture the original images.
+If enough points of correlation between images can be found, the degree of horizontal shift (displacement in pixels) for each point can determine the degree of displacement from the image plane. In other words, a correlation can be seen as two vectors projecting from the two cameras; the projection of one vector on the other camera defines a line called the epiline, and the color information from the other information should lie on that line. When that point is found, the distance along the point of intersection defines the 3-dimensional location of the point.
+
+Assuming a model where 2 calibrated cameras are planar and separated by their interocular distance, the epilines are horizontal, and knowing information about the cameras (i.e. the interocular distance) can enable us to calculate a depth distance for each point. These data can be used to create a point cloud, which can be meshed and textured with the images in order to recreate a 3d scene that can be slightly panned and tilted to recreate novel views of the original scene, within the limits of the original cameras to capture (features occluded in one or both images will, of course, yield no color or depth information respectively). 
+
+OpenCV has some [functionality for this purpose](http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_calib3d/py_depthmap/py_depthmap.html#py-depthmap), but using the approach has a drawback: due to the slight displacement between cameras, it's difficult to construct this depth information with much resolution. The result is noisy and often has to be tuned by hand to attempt to filter out this noise.
+
+We can actually do better with OpenCV's feature detection and correlating similar features between images, which gets us mostly there. OpenCV uses a pixel-by-pixel disparity comparison to calculate a depth map, but we can smooth out the depth map with "likely known similar features". The drawback is that due to occlusions due to parallax, this method is not great for finding corners where depth can cause the pixels around the corners to vary. In other words, this will help us find the points within an object at a set distance that are similar features, but we are really interested in sharpening the edges of the object in 3d space. A corner on the edge of an object in 3d space will be seen as "more dissimilar" to the same corner in the other image, because parallax will cause the neighborhood background of the corner to change. This is likely to disqualify features on the edges of objects, which is important in reconstructing the scene.
+
+A better method than using OpenCV's feature detection or using a disparity map alone would be to tune the feature detection process with knowledge from both images. Knowledge about the nature of stereo images gives us an improved edge detection algorithm: we know the sort of data that should be available not only on the epiline, but using an assumption that is relevant for stereo imaging: as you scan a stereo image from left to right, you can create color level curves for the neighborhood of the pixel. These color curves are in essence a discrete measurement of continuous data. These curves must assume discontinuity at the near vicinity of the point on an edge, since the geometry in the foreground is displaced against the background. If we can locate points on the epiline which have horizontal curves that match _with a discontinuity and offset between images_, we have found an edge in 3d space. This should greatly improve the ability to draw discrete geometry boundaries on the disparity map.
+
+Therefore, the final algorithm for smooth geometry from a point cloud would be:
+
+1) Generate a disparity map using OpenCV. This disparity map will be generated with the [block matching](http://www.cs.cmu.edu/~motionplanning/papers/sbp_papers/integrated1/konolidge_stereo_vision.pdf) algorithm, which results in a fairly noisy set of correlations. Tune this algorithm to look for a certain level in reduction of noise, and use that as a first-step disparity calculation.
+
+2) Use OpenCV's feature detection algorithm to find features in each image.
+
+3) Any features that lie in an area of relative smoothness in depth from the first image are classified as "interior" feature matches, and their depth is calculated as their average disparity from the disparity map.
+
+4) Use the remaining features with the method described above: travel along the epiline of the feature in the other image, essentially horizontally, and find where there is a discontinuity to the left and right of the feature. Edges found with right-approaching similarities in color functions are left-foreground edges, and with left-approaching similarities are right-foreground edges. These points are "foreground edge" feature matches.
+
+5) If possible, traveling further along the horizontal line towards the background direction may yield another feature match: where the background's color functions match above a certain threshold the limit from the background-side approach on the other image. This can provide a "background edge" feature match and further define the set of occluded pixels between the two images.
+
+6) All features now have a more-strictly defined depth than the disparity map alone, though they only represent a small subset of the pixels in the disparity map. Using splines constructed from these feature points, we can sharpen the disparity map (and/or iterate on this algorithm with a better set of inputs while creating the disparity map) in order to better define a sharp disparity buffer.
+
+7) The cleaned disparity buffer can be tesselated in order to construct triangles which recreate the 3d image. Appropriate sampling of the images can supply the texture data to paint on the surfaces.
+
+This can be used for an interactive view, or create an "advanced wigglegram" where the image can be smoothly animated between the left and right images, or displayed easily in hardware capable of displaying 3d scenes in stereo (e.g. Oculus Rift). This can also be used to virtually shrink the interpupilary distance between images for closer or macro shots, or to simulate toe-in and parallel views of the eye, by rendering the scene with different camera parameters than the ones used to capture the original images.
+
+
+

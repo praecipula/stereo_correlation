@@ -6,11 +6,10 @@
 namespace Stereo
 {
 
-    const QPoint Reticle::s_noPoint(-1, -1);
-    const QPoint Reticle::s_hotSpot(20, 20);
+    const Coordinate Reticle::s_hotSpot(20, 20);
 
     Reticle::Reticle():
-      m_location(s_noPoint), m_dimensions(s_noPoint), m_color(255, 255, 255, 255), m_texture()
+      m_location(Coordinate::NO_POINT), m_dimensions(Coordinate::NO_POINT), m_color(255, 255, 255, 255), m_texture()
     {
     }
 
@@ -19,12 +18,12 @@ namespace Stereo
       QString resourceImage = QCoreApplication::applicationDirPath() + "/../Resources/reticle.png";
       QImage image = QImage(resourceImage);
       m_texture = texture_ptr(new QOpenGLTexture(image.mirrored()));
-      m_dimensions = QPoint(image.width(), image.height());
+      m_dimensions = Coordinate(image.width(), image.height());
     }
 
     void Reticle::moveTo(const QPoint &coords)
     {
-      m_location = coords;
+      m_location = Coordinate(coords.x(), coords.y());
     }
 
     void Reticle::paintGL()
@@ -35,7 +34,7 @@ namespace Stereo
      * The raw location would paint the bottom left coordinate, so we shift the
      * texture down and to the left - negatively - based on the hot spot location.
      */
-      QPoint glCoordinates = m_location - s_hotSpot;
+      Coordinate glCoordinates = m_location - s_hotSpot;
       if (m_texture) {
         m_texture->bind();
         glPushMatrix();

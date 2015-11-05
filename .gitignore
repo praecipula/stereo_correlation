@@ -2,3 +2,4 @@ build*
 *.swp
 *.swo
 .DS_store
+*.user

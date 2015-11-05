@@ -4,9 +4,9 @@
 
 #include <QMetaType>
 #include <QColor>
-#include <QPoint>
 #include <QOpenGLTexture>
-#include "boost/shared_ptr.hpp"
+#include <memory>
+#include "model/coordinate.h"
 
 namespace Stereo
 {
@@ -14,9 +14,8 @@ namespace Stereo
   class Reticle
   {
   public:
-    static const QPoint s_noPoint;
-    static const QPoint s_hotSpot;
-    typedef boost::shared_ptr<QOpenGLTexture> texture_ptr;
+    static const Coordinate s_hotSpot;
+    typedef std::shared_ptr<QOpenGLTexture> texture_ptr;
 
     Reticle();
     void initializeTexture();
@@ -25,8 +24,8 @@ namespace Stereo
     void paintGL();
 
   private:
-    QPoint m_location;
-    QPoint m_dimensions;
+    Coordinate m_location;
+    Coordinate m_dimensions;
     QColor m_color;
     texture_ptr m_texture;
   };

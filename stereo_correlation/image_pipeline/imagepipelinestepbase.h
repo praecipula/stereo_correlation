@@ -2,7 +2,7 @@
 #define IMAGEPIPELINESTEPBASE_H
 
 #include "common.h"
-#include "boost/shared_ptr.hpp"
+#include <memory>
 #include <vector>
 
 //forward-declare
@@ -18,9 +18,9 @@ namespace Stereo
   public:
 
     // The pipeline is assembled as a std List or Vector (anything forward iterable) of these pointers.
-    typedef boost::shared_ptr<ImagePipelineStepBase> ptr;
+    typedef std::shared_ptr<ImagePipelineStepBase> ptr;
 
-    typedef boost::shared_ptr<Magick::Image> image_ptr;
+    typedef std::shared_ptr<Magick::Image> image_ptr;
     typedef std::vector<image_ptr> image_list;
 
     /*

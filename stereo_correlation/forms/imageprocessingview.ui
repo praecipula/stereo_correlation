@@ -32,7 +32,7 @@
       <item>
        <layout class="QVBoxLayout" name="displayLayout">
         <item>
-         <widget class="QOpenGLWidget" name="openGLWidget">
+         <widget class="QOpenGLWidget" name="processingGraphView">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -56,45 +56,19 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="saveAnaglyphOnExport">
-            <property name="text">
-             <string>Save anaglyph on export</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="processingStepsLayout">
-        <item>
-         <widget class="QTreeWidget" name="processingSteps">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="MinimumExpanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <column>
-           <property name="text">
-            <string notr="true">1</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-        <item>
-         <widget class="QListWidget" name="potentialOperations">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QListWidget" name="availableOperations">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

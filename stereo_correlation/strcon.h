@@ -1,7 +1,6 @@
 #ifndef STRCON_H
 #define STRCON_H
 
-#include "boost/shared_ptr.hpp"
 #include <QString>
 
 // forward declarations

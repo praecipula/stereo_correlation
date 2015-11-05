@@ -13,14 +13,18 @@ CONFIG += c++11
 TARGET = stereo_correlation
 TEMPLATE = app
 
+
+
 # Use homebrew's ImageMagick++ libraries. In future, perhaps build and distribute alongside.
 PKG_CONFIG = PKG_CONFIG_PATH=/usr/local/lib/pkgconfig /usr/local/bin/pkg-config
 CONFIG += link_pkgconfig
 PKGCONFIG = ImageMagick++
 
-INCLUDEPATH += ../thirdparty/include
+INCLUDEPATH += ../thirdparty/include \
+../thirdparty/include/jsoncpp/dist
 
-SOURCES += main.cpp\
+SOURCES += jsoncpp.cpp\
+main.cpp\
 imagecamera2d.cpp \
 stereocorrelation.cpp \
 widgets/qleftimagecanvaswidget.cpp \
@@ -33,9 +37,11 @@ image_pipeline/imagepipelinestepbase.cpp \
 image_pipeline/saveimage.cpp \
 imageprocessingview.cpp \
 image_pipeline/imagepipeline.cpp \
-    image_pipeline/openimage.cpp \
-    image_pipeline/guiimagepipelinebuilder.cpp \
-    workspace.cpp
+image_pipeline/openimage.cpp \
+image_pipeline/guiimagepipelinebuilder.cpp \
+model/workspace.cpp \
+model/coordinate.cpp
+
 
 HEADERS  += common.h \
 imagecamera2d.h \
@@ -50,9 +56,10 @@ image_pipeline/imagepipelinestepbase.h \
 image_pipeline/saveimage.h \
 imageprocessingview.h \
 image_pipeline/imagepipeline.h \
-    image_pipeline/openimage.h \
-    image_pipeline/guiimagepipelinebuilder.h \
-    workspace.h
+image_pipeline/openimage.h \
+image_pipeline/guiimagepipelinebuilder.h \
+model/workspace.h \
+model/coordinate.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

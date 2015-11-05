@@ -2,7 +2,7 @@
 #define IMAGECAMERA2D_H
 
 #include "common.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <QOpenGLFunctions>
 #include <QPoint>
 

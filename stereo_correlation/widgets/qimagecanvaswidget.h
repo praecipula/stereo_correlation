@@ -2,7 +2,7 @@
 #define QIMAGECANVASWIDGET
 
 #include "common.h"
-#include <boost/smart_ptr.hpp>
+#include <memory>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QOpenGLTexture>
@@ -31,8 +31,8 @@ namespace Stereo
      * Typedefs
      ********/
     public:
-      typedef boost::shared_ptr<std::string> filename_ptr;
-      typedef boost::shared_ptr<QOpenGLTexture> texture_ptr;
+      typedef std::shared_ptr<std::string> filename_ptr;
+      typedef std::shared_ptr<QOpenGLTexture> texture_ptr;
       // Sentinel value. Ehh.
       static const QPoint s_noPoint;
 

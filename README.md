@@ -43,9 +43,9 @@ Stretch features:
 Project status:
 ------
 
-I have just begun my port into C++ in my spare time, so there are definitely some things lacking. Documentation (other than this overview) and testing are abysmal in terms of completion - documentation is just notes to myself to remind me of what is going on, and testing is a visual comparison to the known good output as produced by the prototype. This is not due to a lack of caring or a lack of awareness, but rather a sprint to try to recreate this project to a similar completion level as the prototype, which will allow me to focus more time on quality standards and less on a dash to try to obsolete the prototype. In addition, the default project configuration was not to use the features of C++11; however, I believe that the libraries used are fully functional under C++11 and will port over to that version of the language at the same time.
+I have just begun my port into C++ in my spare time, so there are definitely some things lacking. Documentation (other than this overview) and testing are abysmal in terms of completion - documentation is just notes to myself to remind me of what is going on, and testing is a few meager unit tests. This is not due to a lack of caring or a lack of awareness, but rather a sprint to try to recreate this project to a similar completion level as the prototype, which will allow me to focus more time on quality standards and less on a dash to try to obsolete the prototype.
 
-Documentation will be handled with Doxygen, testing will likely use CppSpec.
+Documentation will be handled with Doxygen, testing is using google test.
 
 A deeper look into the features
 ------
@@ -178,7 +178,7 @@ Therefore, the final algorithm for smooth geometry from a point cloud would be:
 
 4) Use the remaining features with the depth-aware edge detection method described above: travel along the epiline of the feature in the other image, essentially horizontally, and find where there is a discontinuity to the left and right of the feature. Edges found with right-approaching similarities in color functions are left-foreground edges, and with left-approaching similarities are right-foreground edges. These points are "foreground edge" feature matches.
 
-5) If possible, traveling further along the epiline line towards the background direction may yield another feature match: where the background's color functions match the limit from the background-side approach on the other image. In other words, "jump" the occlusion in one image to find the point in the other image where the background abuts the edge. This can provide a "background edge" feature match and define the set of occluded pixels (and therefore local relative distance in depth) between the two images.
+5) If possible, traveling further along the epiline line towards the background direction may yield another feature match: where the background's color functions match the limit from the background-side approach on the other image. In other words, "jump" the occlusion in one image until we find the point where the other image's color function abuts the edge. This can provide a "background edge" feature match and define the set of occluded pixels (and therefore local relative distance in depth) between the two images. This requires some level of discrimination of the background; if the background is, say, clear blue sky, the color function is flat and this won't work.
 
 6) All features now have a more-strictly defined depth than the disparity map alone, though they only represent a small subset of the pixels in the disparity map. Using, for example, splines constructed from these feature points, we can construct a filter to sharpen the disparity map (and/or iterate on this algorithm again with a better set of inputs while creating the disparity map) in order to better define a sharp disparity buffer.
 

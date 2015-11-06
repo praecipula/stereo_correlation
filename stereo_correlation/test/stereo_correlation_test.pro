@@ -13,18 +13,24 @@ CONFIG += c++11
 TARGET = stereo_correlation
 TEMPLATE = app
 
-
-
 # Use homebrew's ImageMagick++ libraries. In future, perhaps build and distribute alongside.
 PKG_CONFIG = PKG_CONFIG_PATH=/usr/local/lib/pkgconfig /usr/local/bin/pkg-config
 CONFIG += link_pkgconfig
 PKGCONFIG = ImageMagick++
 
-INCLUDEPATH += ../thirdparty/include \
-../thirdparty/include/jsoncpp/dist
+INCLUDEPATH += ../../thirdparty/include \
+../../thirdparty/include/jsoncpp/dist\
+
+
+# Now set the locations of the source files
+INCLUDEPATH += ..
+VPATH += ..
+
+# And our non-system libs
+LIBS += -L"$$PWD/../../thirdparty/lib"
+LIBS += -lgtest -lgtest_main
 
 SOURCES += jsoncpp.cpp\
-main.cpp\
 imagecamera2d.cpp \
 stereocorrelation.cpp \
 widgets/qleftimagecanvaswidget.cpp \
@@ -44,7 +50,8 @@ model/coordinate.cpp \
     widgets/qcomputationaldagwidget.cpp \
     roundededgeorthographictextablebox.cpp \
     distancefieldglfont.cpp \
-    qtdistancefieldfonttexturegenerator.cpp
+    qtdistancefieldfonttexturegenerator.cpp\
+all_tests.cpp # Start with the tests now.
 
 
 HEADERS  += common.h \
@@ -67,7 +74,8 @@ model/coordinate.h \
     widgets/qcomputationaldagwidget.h \
     roundededgeorthographictextablebox.h \
     distancefieldglfont.h \
-    qtdistancefieldfonttexturegenerator.h
+    qtdistancefieldfonttexturegenerator.h \
+    strcon_test.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui
@@ -89,4 +97,4 @@ defineTest(copyToDestdir) {
     export(QMAKE_POST_LINK)
 }
 
-copyToDestdir(assets/reticle.png)
+copyToDestdir(../assets/reticle.png)

@@ -32,7 +32,7 @@
       <item>
        <layout class="QVBoxLayout" name="displayLayout">
         <item>
-         <widget class="QOpenGLWidget" name="processingGraphView">
+         <widget class="Stereo::QComputationalDagWidget" name="processingGraphView">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -86,6 +86,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Stereo::QComputationalDagWidget</class>
+   <extends>QOpenGLWidget</extends>
+   <header>widgets/qcomputationaldagwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -1,8 +1,12 @@
 #ifndef COORDINATE_H
 #define COORDINATE_H
 
+#include "common.h"
 #include <string>
 #include <limits>
+#include "boost/archive/xml_wiarchive.hpp"
+#include "boost/archive/xml_woarchive.hpp"
+#include "boost/serialization/nvp.hpp"
 
 namespace Stereo
 {
@@ -49,7 +53,11 @@ namespace Stereo
         Coordinate operator/ (int factor) const;
 
         // String print
-        std::string to_s() const;
+        std::string to_s() const {std::ostringstream buf;
+                                  buf << "x:" << m_x << ", y:" << m_y;
+                                  return buf.str();}
+        // With implicit conversion
+        operator string() {return to_s();}
 
         // "unset" sentinel
         static const Coordinate NO_POINT;
@@ -59,4 +67,18 @@ namespace Stereo
 
     };
 }
+
+namespace boost
+{
+    namespace serialization
+    {
+        template<class Archive>
+        void serialize(Archive& ar, const Stereo::Coordinate& coordinate, const unsigned int version)
+        {
+            ar << coordinate.x();
+            ar << coordinate.y();
+        }
+    }
+}
+BOOST_CLASS_VERSION(Stereo::Coordinate, 0)
 #endif // COORDINATE_H

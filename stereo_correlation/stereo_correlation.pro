@@ -23,6 +23,9 @@ PKGCONFIG = ImageMagick++
 INCLUDEPATH += ../thirdparty/include \
 ../thirdparty/include/jsoncpp/dist
 
+QMAKE_CXXFLAGS += -isystem ../thirdparty/include \
+../thirdparty/include/jsoncpp/dist
+
 SOURCES += jsoncpp.cpp\
 main.cpp\
 imagecamera2d.cpp \
@@ -67,7 +70,8 @@ model/coordinate.h \
     widgets/qcomputationaldagwidget.h \
     roundededgeorthographictextablebox.h \
     distancefieldglfont.h \
-    qtdistancefieldfonttexturegenerator.h
+    qtdistancefieldfonttexturegenerator.h \
+    qtdistancefieldfonttexturegenerator_test.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

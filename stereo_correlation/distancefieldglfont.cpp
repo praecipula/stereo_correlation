@@ -2,6 +2,7 @@
 
 namespace Stereo
 {
+
 DistanceFieldGLFont::DistanceFieldGLFont()
 {
 

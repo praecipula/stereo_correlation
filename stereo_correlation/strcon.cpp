@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <QPoint>
+#include <QRect>
 
 namespace Stereo
 {
@@ -11,6 +12,14 @@ namespace Stereo
     {
       std::stringstream buf;
       buf << point.x() << 'x' << point.y();
+      m_str = buf.str();
+    }
+
+    StrCon::StrCon(const QRect &rect):
+        m_str()
+    {
+      std::stringstream buf;
+      buf << rect.left() << ',' << rect.top() << '@' << rect.width() << "x" << rect.height();
       m_str = buf.str();
     }
 

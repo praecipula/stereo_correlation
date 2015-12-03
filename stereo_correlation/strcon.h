@@ -5,7 +5,7 @@
 
 // forward declarations
 class QPoint;
-
+class QRect;
 
 namespace Stereo
 {
@@ -21,13 +21,16 @@ public:
 
     // From point.
     StrCon(const QPoint& point);
+    // From rect.
+    StrCon(const QRect& rect);
     // From QString
     StrCon(const QString& string);
     // From std string
     StrCon(const std::string& string);
 
     // To std string
-    operator std::string() const{return m_str;}
+    std::string to_s() const{return m_str;}
+    operator std::string() const{return to_s();}
     // To qstring
     operator QString() const {return QString::fromStdString(m_str);}
 

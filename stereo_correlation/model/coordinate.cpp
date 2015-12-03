@@ -61,11 +61,4 @@ namespace Stereo
         return Coordinate(m_x / factor, m_y / factor);
 
     }
-
-    std::string Coordinate::to_s() const
-    {
-        std::ostringstream buf;
-        buf << "x:" << m_x << ", y:" << m_y;
-        return buf.str();
-    }
 }

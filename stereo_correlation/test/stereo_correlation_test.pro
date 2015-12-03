@@ -21,6 +21,11 @@ PKGCONFIG = ImageMagick++
 INCLUDEPATH += ../../thirdparty/include \
 ../../thirdparty/include/jsoncpp/dist\
 
+QMAKE_CXXFLAGS += -isystem ../../thirdparty/include \
+../../thirdparty/include/jsoncpp/dist
+
+# This is only a test.
+DEFINES += "STEREO_TEST=1"
 
 # Now set the locations of the source files
 INCLUDEPATH += ..
@@ -75,7 +80,8 @@ model/coordinate.h \
     roundededgeorthographictextablebox.h \
     distancefieldglfont.h \
     qtdistancefieldfonttexturegenerator.h \
-    strcon_test.h
+    strcon_test.h \
+    qtdistancefieldfonttexturegenerator_test.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui
@@ -97,4 +103,8 @@ defineTest(copyToDestdir) {
     export(QMAKE_POST_LINK)
 }
 
+# Original assets
+copyToDestdir(../assets/reticle.png)
+
+# Test assets
 copyToDestdir(../assets/reticle.png)

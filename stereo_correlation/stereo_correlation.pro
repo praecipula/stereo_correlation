@@ -33,6 +33,9 @@ stereocorrelation.cpp \
 widgets/qleftimagecanvaswidget.cpp \
 widgets/qrightimagecanvaswidget.cpp \
 widgets/qimagecanvaswidget.cpp \
+widgets/qstereomeshwidget.cpp \
+model/coordinate.cpp \
+model/workspace.cpp \
 strcon.cpp \
 metatyperegistration.cpp \
 reticle.cpp \
@@ -42,12 +45,10 @@ imageprocessingview.cpp \
 image_pipeline/imagepipeline.cpp \
 image_pipeline/openimage.cpp \
 image_pipeline/guiimagepipelinebuilder.cpp \
-model/workspace.cpp \
-model/coordinate.cpp \
-    widgets/qcomputationaldagwidget.cpp \
-    roundededgeorthographictextablebox.cpp \
-    distancefieldglfont.cpp \
-    qtdistancefieldfonttexturegenerator.cpp
+widgets/qcomputationaldagwidget.cpp \
+roundededgeorthographictextablebox.cpp \
+distancefieldglfont.cpp \
+qtdistancefieldfonttexturegenerator.cpp
 
 
 HEADERS  += common.h \
@@ -56,6 +57,9 @@ stereocorrelation.h \
 widgets/qleftimagecanvaswidget.h \
 widgets/qrightimagecanvaswidget.h \
 widgets/qimagecanvaswidget.h \
+widgets/qstereomeshwidget.h \
+    model/coordinate.h \
+    model/workspace.h \
 strcon.h \
 metatyperegistration.h \
 reticle.h \
@@ -65,13 +69,10 @@ imageprocessingview.h \
 image_pipeline/imagepipeline.h \
 image_pipeline/openimage.h \
 image_pipeline/guiimagepipelinebuilder.h \
-model/workspace.h \
-model/coordinate.h \
-    widgets/qcomputationaldagwidget.h \
-    roundededgeorthographictextablebox.h \
-    distancefieldglfont.h \
-    qtdistancefieldfonttexturegenerator.h \
-    qtdistancefieldfonttexturegenerator_test.h
+widgets/qcomputationaldagwidget.h \
+roundededgeorthographictextablebox.h \
+distancefieldglfont.h \
+qtdistancefieldfonttexturegenerator.h \
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

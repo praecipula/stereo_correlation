@@ -273,7 +273,7 @@ namespace Stereo
 
     }
 
-    DistanceFieldGLFont::FontMetrics QtDistanceFieldFontTextureGenerator::pack(const QImage& characterImage,
+    DistanceFieldGLFont::FontMetrics QtDistanceFieldFontTextureGenerator::pack(QImage characterImage,
                                                                                const DistanceFieldGLFont::FontMetrics& sourceMetrics,
                                                                                QImage& fontAtlas,
                                                                                packBitmap& marked)

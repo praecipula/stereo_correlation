@@ -41,6 +41,7 @@ stereocorrelation.cpp \
 widgets/qleftimagecanvaswidget.cpp \
 widgets/qrightimagecanvaswidget.cpp \
 widgets/qimagecanvaswidget.cpp \
+widgets/qstereomeshwidget.cpp \
 strcon.cpp \
 metatyperegistration.cpp \
 reticle.cpp \
@@ -65,6 +66,7 @@ stereocorrelation.h \
 widgets/qleftimagecanvaswidget.h \
 widgets/qrightimagecanvaswidget.h \
 widgets/qimagecanvaswidget.h \
+widgets/qstereomeshwidget.h \
 strcon.h \
 metatyperegistration.h \
 reticle.h \
@@ -81,7 +83,8 @@ model/coordinate.h \
     distancefieldglfont.h \
     qtdistancefieldfonttexturegenerator.h \
     strcon_test.h \
-    qtdistancefieldfonttexturegenerator_test.h
+    qtdistancefieldfonttexturegenerator_test.h \
+    qstereomeshwidget_test.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

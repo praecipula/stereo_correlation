@@ -2,7 +2,7 @@
 #include <QApplication>
 #include "strcon_test.h"
 #include "qtdistancefieldfonttexturegenerator_test.h"
-
+#include "qstereomeshwidget_test.h"
 
 
 int main(int argc, char **argv) {

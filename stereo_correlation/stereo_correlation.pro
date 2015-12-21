@@ -48,7 +48,8 @@ image_pipeline/guiimagepipelinebuilder.cpp \
 widgets/qcomputationaldagwidget.cpp \
 roundededgeorthographictextablebox.cpp \
 distancefieldglfont.cpp \
-qtdistancefieldfonttexturegenerator.cpp
+qtdistancefieldfonttexturegenerator.cpp \
+    model/stereomesh.cpp
 
 
 HEADERS  += common.h \
@@ -73,6 +74,7 @@ widgets/qcomputationaldagwidget.h \
 roundededgeorthographictextablebox.h \
 distancefieldglfont.h \
 qtdistancefieldfonttexturegenerator.h \
+    model/stereomesh.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

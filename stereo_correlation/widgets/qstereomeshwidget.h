@@ -13,7 +13,7 @@ namespace Stereo
         QStereoMeshWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
         virtual ~QStereoMeshWidget();
 
-        void setLeftImage(QImage leftImage){m_leftImage = leftImage;}
+
 
         void initializeGL(){}
         void resizeGL(int w, int h){}

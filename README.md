@@ -217,13 +217,15 @@ Principal component analysis deals with defining a rotation of the standard cart
 
 (Side note: I first experienced PCA in my mechanical engineering classes in order to calculate the principal directions of combined stress in a material - if you perform PCA on an infinitesimal point within the material, you orient the stresses such that the principal components point _only in_ directions of tensile stress. Therefore, any combination of stresses on a material can be modeled as tensile stress in the direction of the principal coordinates, which is why mechanical engineers only need to perform stress tests on materials for tension and not shear - shear is modeled as internal tension. This simplifies finite element analysis immensely. I think it's so cool when math overlaps multiple fields of application.)
 
-Therefore, a covariance matrix of the data is created. A covariance matrix is the outer product of the independent variables of a system - that is, we are looking at x, y, and z in the local neighborhood (relative to the centroid). The covariance matrix is then
+Therefore, a covariance matrix of the data is created. A covariance matrix is the outer product of the expected value deviations of the independent variables of a system - that is, given that we are looking at x, y, and z in the local neighborhood (relative to the centroid). The covariance matrix is then
 
-    [x*x, x*y, x*z]
-    [y*x, y*y, y*x]
-    [z*x, z*y, z*z]
+    [ex*ex, ex*ey, ex*ez]
+    [ey*ex, ey*ey, ey*ex]
+    [ez*ex, ez*ey, ez*ez]
 
-The covariance used in Hoppe's thesis is the sum of residuals of the neighborhood of points, as opposed to a true Gaussian variance; PCA works well in both cases.
+`ex` and so forth in this Markdown-limited notation refers to the sum of residuals for each variable. The most intuitive way to think of the covariance matrix is to realize that the diagonals are the variances in the X, Y, Z directions, and the off-diagonal values represent the combination of residuals in combined directions across pair-dimensions which is analogous to the role of the variance in axis-aligned dimensions. 
+
+The covariance used in Hoppe's thesis is selected from a near neighborhood of local points; neighborhood size is an input parameter to his algorithm.
 
 Performing principle component analysis on the covariance matrix involves taking the three eigenvectors and associated eigenvalues based on the distribution of the data. If you think about what's happening with a point cloud, it's not too hard to determine that these eigenvectors are oriented in the maximally greatest distribution of the points in the local cloud in each direction - the principal components. These vectors are orthogonal, with the eigenvalues representing a measure of the spread of the data, so the third eigenvector (the one with the lowest eigenvalue) points in the direction of the least significant spread of the plane, which yields the (positive or negative) normal vector. Therefore, the definition of the plane is represented by the third principal component vector (to within a sign) located at the centroid of the neighborhood.
 

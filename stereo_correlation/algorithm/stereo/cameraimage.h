@@ -1,0 +1,5 @@
+#ifndef CAMERAIMAGE
+#define CAMERAIMAGE
+
+#endif // CAMERAIMAGE
+

@@ -1,9 +1,9 @@
 # Stereo correlation
 
-| Hello, Lytro folk!|
-|:-----------------:|
+| Hello, happy viewers!|
+|:--------------------:|
 
-While-I hope this document is interesting, it's also a fairly long spec for a program, so it's kinda a long slog. You may wish to skip to the end, start [at this heading](#a-performant-scalable-and-distributable-method-for-mesh-generation-and-sensor-fusion-for-point-clouds); to add context for the point cloud generation you can look just before it at the "Generation of 3D scene from disparity data" feature.
+While-I hope this document is interesting, it's also a fairly long spec for a program, so it's kinda a long slog. The far-reaching goal is to reconstruct 3D scene geometry from the stereo images. If you wish to skip the section about stereo image composition, start [at this heading](#a-performant-scalable-and-distributable-method-for-mesh-generation-and-sensor-fusion-for-point-clouds); to add context for the point cloud generation you can look just before it at the "Generation of 3D scene from disparity data" feature.
 
 
 ------
@@ -193,11 +193,11 @@ OpenVDB in its core is simply a sparse tree-based representation of uniform voxe
 
 This simplifies my implementation immensely from when I first developed this algorithm (specified below), allowing its adaptation to a well-supported, open-sourced, and usefully-licensed library which has many tools - amongst which is a fast Poisson surface reconstruction of level sets tool and filters to pre-massage the data (for example, to reduce noise or to project to a different coordinate space) before mesh generation.
 
-Therefore, the algorithm, at its highest level, becomes "just use OpenVDB". It's not _quite_ that simple (building OpenVDB was a pain, involving hand-editing the Makefile), but the basic algorithm as described below collapses to just the extension sections operating on either the point cloud or the mesh, with data representation and surface reconstruction handled already.
+Therefore, the algorithm, at its highest level, becomes "just use OpenVDB". It's not _quite_ that simple (building OpenVDB was a pain, involving hand-editing the Makefile, and processing the image through OpenCV is not exactly trivial), but the basic algorithm as described below is more interesting for the extension sections operating on either the point cloud or the mesh rather than mesh generation, with data representation and surface reconstruction handled already.
 
 ## Legacy implementation
 
-What follows below is a writeup of my previous (circa 2013 or so) design to handle this case. It shares a number of similarities with the OpenVDB implementation above, but is how I would have handled things "by scratch" and is for informational use only.
+What follows below is a writeup of my previous (circa 2013 or so) design to handle this case. It shares a number of similarities with the OpenVDB implementation above, but is how I would have handled things "by scratch" and is for informational use only (and for design guidance should OpenVDB not pan out).
 
 ---
 
@@ -215,7 +215,7 @@ Hugues Hoppe is an advanced graphics researcher at Microsoft, and he is the auth
 
 Principal component analysis deals with defining a rotation of the standard cartesian coordinates into one where the minimal variances of the data lie on x', y', z'. In other words, the data will assuredly _not_ fall such that the grouping of points in the neighborhood is symmetric and distributed evenly amongst all of global X, Y, and Z, but rather be rotated in some direction from the global coordinate plane. This rotation direction is specified by the principal components of the data, orthogonal vectors that point in the direction of the greatest, second greatest, and third greatest variances. 
 
-(Side note: I first experienced PCA in my mechanical engineering classes in order to calculate the principal directions of combined stress in a material - if you perform PCA on an infinitesimal point within the material, you orient the stresses such that the principal components point _only in_ directions of tensile stress. Therefore, any combination of stresses on a material can be modeled as tensile stress in the direction of the principal coordinates, which is why mechanical engineers only need to perform stress tests on materials for tension and not shear - shear is internal tension. This simplifies finite element analysis immensely.)
+(Side note: I first experienced PCA in my mechanical engineering classes in order to calculate the principal directions of combined stress in a material - if you perform PCA on an infinitesimal point within the material, you orient the stresses such that the principal components point _only in_ directions of tensile stress. Therefore, any combination of stresses on a material can be modeled as tensile stress in the direction of the principal coordinates, which is why mechanical engineers only need to perform stress tests on materials for tension and not shear - shear is modeled as internal tension. This simplifies finite element analysis immensely. I think it's so cool when math overlaps multiple fields of application.)
 
 Therefore, a covariance matrix of the data is created. A covariance matrix is the outer product of the independent variables of a system - that is, we are looking at x, y, and z in the local neighborhood (relative to the centroid). The covariance matrix is then
 

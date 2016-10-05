@@ -1,0 +1,40 @@
+Workflow
+
+We don't know that the images are pointing in the same place for each picture, because of flexion in the camera rig.
+The coordinates between each shot are _always_ assumed to be consistent for stereoCalibrate.
+Anything that we can do to create consistency is good. #sigh. 
+
+A way around this is to know that the displacement between points of a far-background point _should always be the same_ even under rig flexion. Therefore, we can pre-calibrate the calibration by shifting by a displacement to align a far-background point.
+
+Note that this does _not_ take into account the fact that the camera rig may have distortion. We need to align the center point as if the camera did not have distortion, but the center point is likely not the pre-calibration point.
+
+
+# Calibrate the camera:
+
+Take a bunch of pictures
+Use our tools to create a correspondence point for each image. This should be a point that does not change for each image. This point should be as far in the background as possible.
+
+1) Undistort each image for each camera.
+2) Select a background point to realign the images.
+3) Use the undistorted displacement to pre-displace the images
+4) use stereoCalibrate
+
+This pre-calibration step will have to happen for each image pair
+
+
+To do the existing disparity:
+
+We need Q from stereoRectify as well as the disparity.
+The camera matrices are given in the text file. (that's cameraMatrix1 and cameraMatrix2)
+The distortion is 0 for each camera, as the images are pre-undistorted - so identity (that's distCoeffs1 and distCoeffs2)
+The image size is (assumed to be) the same as in the text file at width,height.
+The rotation matrix is identity - no rotation
+The translation vector is given _in units of real-world, I believe_ due to [this](http://answers.opencv.org/question/25022/stereo-calibration-baseline-in-meters/)
+> The unit used in the translation vector (T matrix) is the same unit used when you specify the object coordinate points.
+So I'm assuming that the camera baseline in mm can be used here in a x-translation.
+
+Normally, stereoCalibrate will return R and T as a result of providing a set of known points (the chessboard points) and using those (measured many, many times) in order to calculate R and T. For this case, I assume that this has been done on the test data and it's presented as if it were an ideal displacement with no pointing or measurement errors. When I really do this, this step will be the one that determines R and T in units of chessboard calibration measurements, so that's where units first enter the picture.
+
+I believe this is enough to get stereoRectify to produce R1, R2, P1, P2, Q. It may be that the above data is enough information to characterize this idealized case in order to short-circuit this calculation, but perhaps it'd be good to use CameraRelationship to calculate this in any case.
+
+

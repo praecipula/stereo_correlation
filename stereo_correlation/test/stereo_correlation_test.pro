@@ -47,7 +47,10 @@ macx {
     defineTest(preBuildCopy) {
         FRAMEWORKS = $$1
         for(FRAMEWORK, FRAMEWORKS) {
-            prebuildcopytarget.commands += $$QMAKE_COPY_DIR $$quote($$DIST_DIR/$$FRAMEWORK) $$quote($$BFRAMEWORK_DIR) $$escape_expand(\\n\\t)
+            FRAMEWORKDEST = $$BFRAMEWORK_DIR/$$FRAMEWORK
+            !exists($$FRAMEWORKDEST) {
+                prebuildcopytarget.commands += $$QMAKE_COPY_DIR $$quote($$DIST_DIR/$$FRAMEWORK) $$quote($$BFRAMEWORK_DIR) $$escape_expand(\\n\\t)
+            }
         }
         export(prebuildcopytarget.commands)
     }
@@ -57,6 +60,7 @@ macx {
     preBuildCopy(ThreadingBuildingBlocks.framework)
     preBuildCopy(Log4CPlus.framework)
     preBuildCopy(Blosc.framework)
+    preBuildCopy(OpenCV.framework)
     preBuildCopy(OpenVDB.framework)
     preBuildCopy(IlmBase.framework)
 
@@ -71,16 +75,18 @@ INCLUDEPATH += ../../thirdparty/include \
 
 QMAKE_CXXFLAGS += -isystem ../../thirdparty/include \
 ../../thirdparty/include/jsoncpp/dist
+QMAKE_CXXFLAGS += -I$$quote($$BFRAMEWORK_DIR/OpenCV.framework/Headers)
 
 # Add an rpath for framework libs
 QMAKE_LFLAGS += '-Wl,-rpath,@loader_path/../Frameworks'
 
-INCLUDEPATH += -F$$quote($$BFRAMEWORK_DIR)
 LIBS += -F$$quote($$BFRAMEWORK_DIR/)
 LIBS += -framework Googletest -framework Googletest,main \
+-framework Boost -framework Boost,system -framework Boost,filesystem \
 -framework ThreadingBuildingBlocks \
 -framework Log4CPlus \
 -framework Blosc \
+-framework OpenCV \
 -framework OpenVDB \
 -framework IlmBase
 
@@ -103,12 +109,19 @@ image_pipeline/openimage.cpp \
 image_pipeline/guiimagepipelinebuilder.cpp \
 model/workspace.cpp \
 model/coordinate.cpp \
-model/stereomesh.cpp \
-    widgets/qcomputationaldagwidget.cpp \
-    roundededgeorthographictextablebox.cpp \
-    distancefieldglfont.cpp \
-    qtdistancefieldfonttexturegenerator.cpp\
-all_tests.cpp # Start with the tests now.
+model/pointcloud.cpp \
+algorithm/stereo/cameracalibration.cpp \
+algorithm/stereo/projectpoints.cpp \
+algorithm/stereo/disparity.cpp \
+algorithm/stereo/imagebase.cpp \
+model/stereo_hardware/camera.cpp \
+model/stereo_hardware/camerarelationship.cpp \
+widgets/qcomputationaldagwidget.cpp \
+roundededgeorthographictextablebox.cpp \
+distancefieldglfont.cpp \
+qtdistancefieldfonttexturegenerator.cpp\
+all_tests.cpp \ # Start with the tests now.
+../utility/tostringable.cpp
 
 
 HEADERS  += common.h \
@@ -127,9 +140,10 @@ imageprocessingview.h \
 image_pipeline/imagepipeline.h \
 image_pipeline/openimage.h \
 image_pipeline/guiimagepipelinebuilder.h \
+algorithm/stereo/cameracalibration.h \
 model/workspace.h \
 model/coordinate.h \
-model/stereomesh.h \
+model/pointcloud.h \
     widgets/qcomputationaldagwidget.h \
     roundededgeorthographictextablebox.h \
     distancefieldglfont.h \
@@ -137,7 +151,19 @@ model/stereomesh.h \
     strcon_test.h \
     qtdistancefieldfonttexturegenerator_test.h \
     qstereomeshwidget_test.h \
-    stereomesh_test.h
+    stereomesh_test.h \
+    stereo_point_projection_test.h \
+    ../model/stereo_hardware/camera.h \
+    ../model/stereo_hardware/camerarelationship.h \
+    ../algorithm/stereo/semiglobalblockmatching.h \
+    ../algorithm/stereo/cameraimage.h \
+    ../algorithm/stereo/disparity.h \
+    ../algorithm/stereo/imagebase.h \
+    ../algorithm/stereo/projectpoints.h \
+    ../algorithm/stereo/undistortedimage.h \
+    ../model/pointcloud.h \
+    ../utility/tostringable.h \
+    camera_calibration_test.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui
@@ -179,3 +205,4 @@ copyToDestdir(../assets/reticle.png)
 # Test assets
 copyDirToDestdir(./assets/qtdistancefieldfonttexturegenerator_test)
 copyDirToDestdir(./assets/stereomesh_test)
+copyDirToDestdir(./assets/project_points_test)

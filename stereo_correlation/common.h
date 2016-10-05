@@ -25,7 +25,7 @@
 #include <plog/Log.h>
 #include <plog/Appenders/ConsoleAppender.h>
 #include "metatyperegistration.h"
-#include "model/stereomesh.h"
+#include "model/pointcloud.h"
 
 namespace Stereo
 {
@@ -45,9 +45,8 @@ inline void initialize()
         reg.doRegistration();
     }
     // Initialize our stereo mesh and related types
-    StereoMesh::initialize();
+    PointCloud::initialize();
 #ifdef STEREO_TEST
-#pragma message "Console appender"
     static plog::ConsoleAppender<plog::TxtFormatter> consoleAppender;
     plog::init(plog::verbose, &consoleAppender);
 #else

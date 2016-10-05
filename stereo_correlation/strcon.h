@@ -32,7 +32,8 @@ public:
     std::string to_s() const{return m_str;}
     operator std::string() const{return to_s();}
     // To qstring
-    operator QString() const {return QString::fromStdString(m_str);}
+    QString to_qs() const{return QString::fromStdString(m_str);}
+    operator QString() const {return to_qs();}
 
 private:
     std::string m_str;

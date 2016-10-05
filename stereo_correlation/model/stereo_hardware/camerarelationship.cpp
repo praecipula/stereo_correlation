@@ -1,10 +1,5 @@
-#ifndef CAMERA_RELATIONSHIP_H
-#define CAMERA_RELATIONSHIP_H
-
-#include <opencv2/core/core.hpp>
-#include <memory>
-#include "camera.h"
-#include "algorithm/stereo/undistortedimage.h"
+#include "model/stereo_hardware/camerarelationship.h"
+#include <opencv2/calib3d.hpp>
 
 namespace Stereo
 {
@@ -12,59 +7,63 @@ namespace Stereo
     {
         using namespace cv;
 
-        /**
-         * A CameraRelationship describes the geometry between left and right images
-         * In a sense, it encapsulates the state data and the functionality as provided by OpenCV's
-         * stereoRectify function. It can, however, also be created manually if the parameters
-         * are known.
-         *
-         * The workflow of getting a valid CameraRelationship is essentially to use the Camera's data
-         * and run it through
-         */
-        class CameraRelationship
+        CameraRelationship::CameraRelationship(Camera::const_ptr left, Camera::const_ptr right):
+            m_left(left), m_right(right),
+            m_rotationLeftToRight(Mat::eye(3, 3, CV_64F)), m_translationLeftToRight(Mat::zeros(3, 1, CV_64F)),
+            m_imageSize(), m_camerasCalibrated(false),
+            m_camerasRectified(false)
         {
-        public:
 
-            /**
-             */
-            CameraRelationship();
+        }
+
+        CameraRelationship::CameraRelationship(Camera::const_ptr left, Camera::const_ptr right, int intraocularDistance, Size imageSize):
+            m_left(left), m_right(right),
+            m_rotationLeftToRight(Mat::eye(3, 3, CV_64F)), m_translationLeftToRight(Mat::zeros(3, 1, CV_64F)),
+            m_imageSize(imageSize), m_camerasCalibrated(false),
+            m_camerasRectified(false)
 
 
-            /**
-             * When constructing with two cameras in the left-right configuration - our standard case.
+        {
+            /* Assumption: our cameras are not rotated and are translated horizontally by intraocularDistance.
+             * This allows us to construct the rotation (no rotation) and translation (x-shift) values.
              *
-             * OpenCV is capable of much more, but this assumption simplifies things quite a bit in the
-             * interface of this class.
-             *
-             * @param left a pointer to the (const) left camera model
-             * @param right a pointer to the (const) right camera model
-             * @param intraocularDistance the distance between the centers of both cameras' lenses
-             */
-            CameraRelationship(Camera::const_ptr left, Camera::const_ptr right, int intraocularDistance);
-
-            /**
-             * Remap images taken by both cameras to be homographically related
-             * Once the camera relationship has been established, we use this function in order to
-             * take any new inputs (new, distorted images) and map them to be homographic - that
-             * is, the epipolar lines are parallel and at the same Y-coordinate for each image.
-             *
-             * It is this pair of images to be used for @see Algo::SemiGlobalBlockMatching
-             */
-            // TODO: this return type should be a typedef or a first-class type for semantic purposes of "a stereo image pair"
-            std::pair<Algo::UndistortedImage, Algo::UndistortedImage> rectifyImagePair(const Mat& left, const Mat& right);
-
-            /**
-             * Generate a reprojected image.
-             *
+             * This is most commonly used with reference data, which has been idealized for a "perfect pinhole
+             * stereo camera" model. This is true of the data from [the Middlebury site](http://vision.middlebury.edu/stereo/data/2014/)
              */
 
-            // Typedefs
-            typedef shared_ptr<CameraRelationship> ptr;
-            typedef shared_ptr<const CameraRelationship> const_ptr;
+            /* This would be the correct operation, but the identity matrix, which means "no rotation", happens
+             * to coincide with what we use to default construct the matrix, so we're there already */
+            //m_rotationLeftToRight = Mat::eye(3, 3, CV_64F);
+            m_translationLeftToRight.at<double>(0, 0) = (double) intraocularDistance;
+            m_camerasCalibrated = true;
+            // We can go ahead and do this now. After this call, we have complete info about the relationship, so this constructor can be used for const.
+            calculateRectificationMatrix();
+        }
 
-        };
+        void CameraRelationship::calculateRectificationMatrix()
+        {
+            //Q is wrong here. That means that some input is wrong here.
+            stereoRectify(m_left->cameraMatrix(), m_left->distortionMatrix(),
+                          m_right->cameraMatrix(), m_right->distortionMatrix(),
+                          m_imageSize,
+                          m_rotationLeftToRight, m_translationLeftToRight,
+                          m_rectificationTransformLeft, m_rectificationTransformRight,
+                          m_projectionLeft, m_projectionRight,
+                          m_depthMappingMatrix);
+            m_camerasRectified = true;
+        }
+
+        string CameraRelationship::to_s(Util::ToStringable::Verbosity verbosity) const
+        {
+            // For now, all same verbosity.
+            Util::ToStringable::Verbosity verb = Util::ToStringable::low;
+            switch(verb)
+            {
+            case(Util::ToStringable::low):
+                return "Some string";
+            }
+        }
+
     }
 }
-
-#endif // CAMERA_RELATIONSHIP_H
 

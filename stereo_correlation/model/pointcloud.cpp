@@ -1,24 +1,31 @@
-#include "stereomesh.h"
-
+#include "pointcloud.h"
 namespace Stereo
 {
-    void StereoMesh::initialize()
+    void PointCloud::initialize()
     {
         // Single-initialization guard
-        bool isInitialized = false;
+        static bool isInitialized = false;
         if (!isInitialized)
         {
             // Initialize OpenVDB
             openvdb::initialize();
             // Register the grid in OpenVDB
-            ControlPointGrid::registerGrid();
+            //ControlPointGrid::registerGrid();
             isInitialized = true;
         }
     }
 
-    StereoMesh::StereoMesh()
-    {
 
+    PointCloud::PointCloud():
+        m_grid(new ControlPointGrid(PointCloud::ControlPoint::backgroundControlPoint()))
+    {
+        m_grid->setGridClass(openvdb::GRID_LEVEL_SET);
     }
 
+
+    PointCloud::ControlPoint PointCloud::ControlPoint::backgroundControlPoint()
+    {
+        static ControlPoint backgroundControlPoint;
+        return backgroundControlPoint;
+    }
 }

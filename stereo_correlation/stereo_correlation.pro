@@ -49,7 +49,14 @@ widgets/qcomputationaldagwidget.cpp \
 roundededgeorthographictextablebox.cpp \
 distancefieldglfont.cpp \
 qtdistancefieldfonttexturegenerator.cpp \
-    model/stereomesh.cpp
+    model/pointcloud.cpp \
+    algorithm/stereo/imagebase.cpp \
+    algorithm/stereo/disparity.cpp \
+    algorithm/stereo/projectpoints.cpp \
+    model/stereo_hardware/camerarelationship.cpp \
+    model/stereo_hardware/camera.cpp \
+    utility/tostringable.cpp \
+    algorithm/stereo/cameracalibration.cpp
 
 
 HEADERS  += common.h \
@@ -74,7 +81,18 @@ widgets/qcomputationaldagwidget.h \
 roundededgeorthographictextablebox.h \
 distancefieldglfont.h \
 qtdistancefieldfonttexturegenerator.h \
-    model/stereomesh.h
+    model/stereo_hardware/camera.h \
+    model/stereo_hardware/camerarelationship.h \
+    algorithm/stereo/semiglobalblockmatching.h \
+    algorithm/stereo/disparity.h \
+    algorithm/stereo/cameraimage.h \
+    algorithm/stereo/imagebase.h \
+    algorithm/stereo/undistortedimage.h \
+    algorithm/stereo/projectpoints.h \
+    algorithm/stereo/pointcloud.h \
+    model/pointcloud.h \
+    utility/tostringable.h \
+    algorithm/stereo/cameracalibration.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

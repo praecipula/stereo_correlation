@@ -1,0 +1,23 @@
+#ifndef QDISPARITYMESHWIDGET_H
+#define QDISPARITYMESHWIDGET_H
+
+
+/*
+ * QDisparityMeshWidget is a widget for displaying the reconstructed 3D scene in OpenGL.
+ * It takes the left and right images and the disparity image as its input arguments,
+ * uses OpenCV to project the data into a 3d point cloud, then uses OpenVDB to store
+ * that point cloud and reconstruct a mesh of the 3D scene, which is textured with the
+ * images and displayed to the user.
+ */
+class QStereoMeshWidget : public QOpenGLWidget, protected QOpenGLFunctions
+{
+    Q_OBJECT
+public:
+    explicit QStereoMeshWidget(QWidget *parent = 0);
+
+signals:
+
+public slots:
+};
+
+#endif // QDISPARITYMESHWIDGET_H

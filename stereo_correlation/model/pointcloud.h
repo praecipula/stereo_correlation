@@ -2,19 +2,31 @@
 #define STEREOMESH_H
 
 #include "openvdb/openvdb.h"
+#include <memory>
+#include <limits>
+
 
 namespace Stereo
 {
-    /* StereoMesh is our handler for an OpenVDB grid. The grid is specialized from OpenVDB to store a struct
+    using namespace std;
+    /**
+     * PointCloud is our handler for an OpenVDB grid.
+     *
+     * In our case, the grid is specialized from OpenVDB to store a struct
      * that we use to put arbitrary information in the mesh; rather than use, for instance, a FloatGrid, we
      * use a ControlPointGrid, where a ControlPoint is an application-defined struct. This allows us to track
      * information across frames in video, for example, where a POD float would not.
      *
+     * PointCloud has fast copyable semantics due to a pimpl implementation of its contents.
+     *
      */
-    class StereoMesh
+    class PointCloud
     {
     public:
-        StereoMesh();
+        PointCloud();
+        PointCloud(const PointCloud& other);
+
+        // construct with a
 
         /*
          * This is what is stored in OpenVDB. It acts like a Float; the semantic sense of this is that
@@ -26,7 +38,26 @@ namespace Stereo
          */
         struct ControlPoint
         {
+        public:
+            /**
+             * No-argument constructor.
+             * Creates something at distance of the backgroundControlPoint distance.
+             */
+            ControlPoint() :
+                m_isosurfaceDistanceMM(numeric_limits<float>::max()) {}
 
+            ControlPoint(float isosurfaceDistance) :
+                m_isosurfaceDistanceMM(isosurfaceDistance) {}
+
+            ControlPoint(const ControlPoint& other) :
+                m_isosurfaceDistanceMM(other.m_isosurfaceDistanceMM) {}
+
+            operator float(){return m_isosurfaceDistanceMM;}
+
+            // The value for a "background" element of the grid
+            static ControlPoint backgroundControlPoint();
+        private:
+            float m_isosurfaceDistanceMM;
         };
 
         // Our typedefs to work with OpenVDB in a familiar way
@@ -38,6 +69,8 @@ namespace Stereo
          * well in order to get everything working; we'll do both here.
          */
         static void initialize();
+
+        shared_ptr<ControlPointGrid> m_grid;
 
     };
 }

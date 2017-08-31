@@ -28,6 +28,7 @@ namespace Stereo
             typedef std::shared_ptr<const ImageBase> const_ptr;
 
             static ImageBase::ptr load(const string& filename);
+            static ImageBase::ptr loadGrayscale(const string& filename);
 
             /**
              * Construct from OpenCV mat
@@ -44,6 +45,14 @@ namespace Stereo
             /** Get a grayscale copy of this image.
              */
             ptr grayscale_copy();
+
+            /** Get a scaled (rectancular, lanczos) copy of this image.
+             */
+            ptr rect_scaled_copy(double factor);
+
+            /** Save the image
+              */
+            void save(const string& filename);
 
         };
 

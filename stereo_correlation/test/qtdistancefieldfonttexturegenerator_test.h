@@ -68,7 +68,6 @@ TEST_F(QtDistanceFieldFontGeneratorTest, GeneratesImage) {
         {
             std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv1;
             std::string u8str = conv1.to_bytes(c);
-            cout << u8str << endl;
             QImage characterImage = std::get<0>(m_generator.generateCharacterImage(StrCon(u8str)));
             stringstream filename;
             filename << "/tmp/charimage_" << std::hex << int(c) << ".png";

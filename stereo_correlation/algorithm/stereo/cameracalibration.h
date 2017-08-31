@@ -25,12 +25,16 @@ namespace Stereo
         {
         public:
 
+            typedef shared_ptr<CameraCalibration> ptr;
             typedef list<string> CalibrationImageFilenames;
 
             /**
              * @brief CameraCalibration constructor with list of preloaded images
              */
-            CameraCalibration(CalibrationImageFilenames calibrationImages);
+            CameraCalibration(CalibrationImageFilenames calibrationImages,
+                              int chessboardSquaresWide, // The count of _squares_, not _interior corners_
+                              int chessboardSquaresHigh, // The count of _squares_, not _interior corners_
+                              int chessboardSquareMm); // The size of each square in mm
 
             /**
              * @brief processChessboardImages iterates through each image and attempts to use findChessboardCorners on the image.
@@ -43,6 +47,9 @@ namespace Stereo
 
         private:
             CalibrationImageFilenames m_calibrationImageLocations;
+            int m_chessboardSquaresWide;
+            int m_chessboardSquaresHigh;
+            int m_chessboardSquareMm;
         };
     }
 }

@@ -2,10 +2,11 @@
 #include <QApplication>
 #include "common.h"
 #include "strcon_test.h"
-#include "qtdistancefieldfonttexturegenerator_test.h"
+//#include "qtdistancefieldfonttexturegenerator_test.h"
 #include "qstereomeshwidget_test.h"
-#include "stereomesh_test.h"
-#include "stereo_point_projection_test.h"
+//#include "stereomesh_test.h"
+//#include "stereo_point_projection_test.h"
+#include "camera_calibration_test.h"
 
 
 int main(int argc, char **argv) {

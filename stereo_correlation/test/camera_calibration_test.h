@@ -84,23 +84,24 @@ TEST_F(CameraCalibrationTest, FindsCalibrationResult) {
 
     // These are all ltr, top-bottom oriented
     const char* filename_fragments[] = {
-            "G0048093.JPG", "G0178133.JPG", "G0278163.JPG",
-            "G0048094.JPG", "G0288164.JPG",
-            "G0258155.JPG",
-            "G0228146.JPG", "G0258156.JPG",
-            "G0228147.JPG", "G0258157.JPG",
-            "G0168128.JPG", "G0228148.JPG",
-            "G0038089.JPG",
-            "G0038090.JPG", "G0108110.JPG", "G0168130.JPG",
-            "G0038091.JPG", "G0108111.JPG", "G0178131.JPG",
-            "G0048092.JPG", "G0108112.JPG", "G0278162.JPG"//, "G0308172.JPG"
+            "G0048093.JPG", "G0178133.JPG", "G0278163.JPG"//,
+//            "G0048094.JPG", "G0288164.JPG",
+//            "G0258155.JPG",
+//            "G0228146.JPG", "G0258156.JPG",
+//            "G0228147.JPG", "G0258157.JPG",
+//            "G0168128.JPG", "G0228148.JPG",
+//            "G0038089.JPG",
+//            "G0038090.JPG", "G0108110.JPG", "G0168130.JPG",
+//            "G0038091.JPG", "G0108111.JPG", "G0178131.JPG",
+//            "G0048092.JPG", "G0108112.JPG", "G0278162.JPG"//, "G0308172.JPG"
             };
      Algo::CameraCalibration::CalibrationImageFilenames filenames;
      for (const char* fragment : filename_fragments) {
         filenames.push_back(StrCon(QCoreApplication::applicationDirPath() + "/../Resources/camera_calibration_test/" + fragment).to_s());
      }
      Algo::CameraCalibration calibration(filenames, 8, 8, 38);
-     calibration.runCalibration();
+     Algo::CameraCalibration::CalibrationResults::ptr results = calibration.runCalibration();
+     results->serialize();
 }
 
 

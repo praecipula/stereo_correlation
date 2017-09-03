@@ -3,6 +3,8 @@
 
 #include <list>
 #include <string>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include "cameraimage.h"
 /**
  * @brief The CameraCalibration class handles the process of determining the fundamental matrix for a pair of cameras.
@@ -20,6 +22,7 @@ namespace Stereo
     namespace Algo
     {
         using namespace std;
+        namespace pt = boost::property_tree;
 
         /**
          * @brief Class to fix to iterate from row-major, top-left=>bottom-right order
@@ -81,6 +84,54 @@ namespace Stereo
                 vector<Mat> rotationVectorsPerImage;
                 vector<Mat> translationVectorsPerImage;
                 double reprojectionError;
+
+                //TODO: move this into general serialization area for configs.
+                template <typename MatrixType>
+                struct MatrixSerializer
+                {
+                    MatrixSerializer(Mat mat):
+                        m_matrix(mat) {}
+
+                    pt::ptree serialize() {
+                        pt::ptree node;
+                        node.put("rows", m_matrix.rows);
+                        node.put("cols", m_matrix.cols);
+                        pt::ptree data;
+                        for(int r = 0; r < m_matrix.rows; ++r) {
+                            pt::ptree rowNode;
+                            Mat row = m_matrix.row(r);
+                            for(int c = 0; c < m_matrix.cols; ++c){
+                                pt::ptree valueNode;
+                                valueNode.put("", m_matrix.at<MatrixType>(r, c));
+                                rowNode.push_back(make_pair("", valueNode));
+                            }
+                            data.push_back(make_pair("", rowNode));
+                        }
+                        node.add_child("data", data);
+                        return node;
+                    }
+
+                    Mat deserialize(pt::ptree node){
+
+                    }
+
+                    Mat m_matrix;
+                };
+
+                void serialize()
+                {
+                    pt::ptree tree;
+                    tree.put("serialization_version", "1.0");
+
+                    pt::ptree calib;
+                    MatrixSerializer<double> ser(cameraMatrixK);
+                    pt::ptree cameraMatrixNode =ser.serialize();
+                    calib.add_child("camera", cameraMatrixNode);
+                    tree.add_child("calibration", calib);
+                    pt::write_json("/tmp/testjson.json", tree);
+
+
+                }
             };
 
             /**

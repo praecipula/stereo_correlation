@@ -5,3 +5,14 @@ build*
 *.user
 thirdparty
 dist
+
+
+
+
+
+
+
+*
+!*/
+!dist/README.md
+!dist/MACOSX/build.sh

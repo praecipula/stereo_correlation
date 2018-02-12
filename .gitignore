@@ -4,3 +4,4 @@ build*
 .DS_store
 *.user
 thirdparty
+dist

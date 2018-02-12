@@ -3,8 +3,11 @@
 
 #include <list>
 #include <string>
+#include <iostream>
+#include <fstream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/foreach.hpp>
 #include "cameraimage.h"
 /**
  * @brief The CameraCalibration class handles the process of determining the fundamental matrix for a pair of cameras.
@@ -89,20 +92,19 @@ namespace Stereo
                 template <typename MatrixType>
                 struct MatrixSerializer
                 {
-                    MatrixSerializer(Mat mat):
-                        m_matrix(mat) {}
+                    MatrixSerializer(){}
 
-                    pt::ptree serialize() {
+                    pt::ptree serialize(const Mat& matrix) {
                         pt::ptree node;
-                        node.put("rows", m_matrix.rows);
-                        node.put("cols", m_matrix.cols);
+                        node.put("rows", matrix.rows);
+                        node.put("cols", matrix.cols);
                         pt::ptree data;
-                        for(int r = 0; r < m_matrix.rows; ++r) {
+                        for(int r = 0; r < matrix.rows; ++r) {
                             pt::ptree rowNode;
-                            Mat row = m_matrix.row(r);
-                            for(int c = 0; c < m_matrix.cols; ++c){
+                            Mat row = matrix.row(r);
+                            for(int c = 0; c < matrix.cols; ++c){
                                 pt::ptree valueNode;
-                                valueNode.put("", m_matrix.at<MatrixType>(r, c));
+                                valueNode.put("", matrix.at<MatrixType>(r, c));
                                 rowNode.push_back(make_pair("", valueNode));
                             }
                             data.push_back(make_pair("", rowNode));
@@ -111,26 +113,63 @@ namespace Stereo
                         return node;
                     }
 
-                    Mat deserialize(pt::ptree node){
-
+                    Mat deserialize(const pt::ptree& node){
+                        int rows = node.get<int>("rows");
+                        int cols = node.get<int>("cols");
+                        Mat mat = Mat(rows, cols, CV_64F);
+                        pt::ptree data = node.get_child("data");
+                        int r = 0;
+                        BOOST_FOREACH(const pt::ptree::value_type& row, data.get_child("")) {
+                            int c = 0;
+                            BOOST_FOREACH(const pt::ptree::value_type& node, row.second.get_child("")) {
+                                MatrixType value = node.second.get<MatrixType>("");
+                                mat.at<MatrixType>(r, c) = value;
+                                ++c;
+                            }
+                            ++r;
+                        }
+                        return mat;
                     }
-
-                    Mat m_matrix;
                 };
 
-                void serialize()
+                void serialize(std::string filename)
                 {
                     pt::ptree tree;
                     tree.put("serialization_version", "1.0");
 
                     pt::ptree calib;
-                    MatrixSerializer<double> ser(cameraMatrixK);
-                    pt::ptree cameraMatrixNode =ser.serialize();
+
+                    MatrixSerializer<double> ser;
+                    pt::ptree cameraMatrixNode = ser.serialize(cameraMatrixK);
                     calib.add_child("camera", cameraMatrixNode);
+                    pt::ptree distortionCoefNode = ser.serialize(distortionCoefficientsD);
+                    calib.add_child("distortion", distortionCoefNode);
+                    calib.put("reprojection_error", reprojectionError);
+                    // At this time, it's not clear that there's any value in adding in the
+                    // translation and rotation vectors for the chessboards for future use.
+                    // (In fact, the reprojection_error is less useful, but it can be
+                    // used to evaluate by eye looking at the file how good the calibration
+                    // seems to be.
                     tree.add_child("calibration", calib);
-                    pt::write_json("/tmp/testjson.json", tree);
+                    pt::write_json(filename, tree);
+                }
 
+                void deserialize(std::string filename) {
+                    ifstream stream;
+                    stream.open(filename, ifstream::in);
+                    pt::ptree tree;
+                    pt::read_json(stream, tree);
 
+                    pt::ptree calib = tree.get_child("calibration");
+
+                    MatrixSerializer<double> ser;
+                    pt::ptree cameraMatrixNode = calib.get_child("camera");
+                    cameraMatrixK = ser.deserialize(cameraMatrixNode);
+                    pt::ptree distortionCoefficientsNode = calib.get_child("distortion");
+                    distortionCoefficientsD = ser.deserialize(distortionCoefficientsNode);
+                    reprojectionError = calib.get<double>("reprojection_error");
+
+                    return;
                 }
             };
 

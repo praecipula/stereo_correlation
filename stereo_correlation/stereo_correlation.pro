@@ -56,7 +56,8 @@ qtdistancefieldfonttexturegenerator.cpp \
     model/stereo_hardware/camerarelationship.cpp \
     model/stereo_hardware/camera.cpp \
     utility/tostringable.cpp \
-    algorithm/stereo/cameracalibration.cpp
+    algorithm/stereo/cameracalibration.cpp \
+    image_pipeline/camera_undistort.cpp
 
 
 HEADERS  += common.h \
@@ -92,7 +93,8 @@ qtdistancefieldfonttexturegenerator.h \
     algorithm/stereo/pointcloud.h \
     model/pointcloud.h \
     utility/tostringable.h \
-    algorithm/stereo/cameracalibration.h
+    algorithm/stereo/cameracalibration.h \
+    image_pipeline/camera_undistort.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

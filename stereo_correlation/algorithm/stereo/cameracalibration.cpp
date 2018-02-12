@@ -58,7 +58,7 @@ namespace Stereo
             int imgno = 0;
             for (string filename : m_calibrationImageLocations)
             {
-
+                LOGD << "Working with " << filename;
                 // These are the discovered corners, and may be in the scaled image's dimensions.
                 vector<cv::Point2f> corners;
                 // Open the file, make grayscale.
@@ -116,6 +116,7 @@ namespace Stereo
                 LOGI << filename << " is image no " << imgno;
                 std::stringstream stream;
                 stream << "/tmp/chessboard" << imgno << ".jpg";
+                LOGD << "Saving to " << stream.str();
                 pColor->save(stream.str());
                 imgno++;
                 detectedImages.push_back(make_pair(unscaledCorners, filename));

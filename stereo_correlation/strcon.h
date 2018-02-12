@@ -2,6 +2,7 @@
 #define STRCON_H
 
 #include <QString>
+#include <QStringList>
 
 // forward declarations
 class QPoint;
@@ -25,6 +26,8 @@ public:
     StrCon(const QRect& rect);
     // From QString
     StrCon(const QString& string);
+    // From list of QStrings
+    StrCon(const QStringList& stringList);
     // From std string
     StrCon(const std::string& string);
 

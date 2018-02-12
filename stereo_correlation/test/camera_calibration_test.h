@@ -65,7 +65,8 @@ TEST_F(CameraCalibrationTest, DoesNotFindCloseChessboardImageCorners) {
     EXPECT_NE(49, chessboardCorners.front().first.size());
 }
 
-TEST_F(CameraCalibrationTest, FindsCalibrationResult) {
+//TODO: this should use a better-shot more standard set of images
+TEST_F(CameraCalibrationTest, DISABLED_FindsCalibrationResult) {
     // These all tested OK, with the exception of 308172, which I'm leaving in to test.
     cv::setBreakOnError(true);
     // These all work, but don't all have the right orientation.
@@ -84,16 +85,16 @@ TEST_F(CameraCalibrationTest, FindsCalibrationResult) {
 
     // These are all ltr, top-bottom oriented
     const char* filename_fragments[] = {
-            "G0048093.JPG", "G0178133.JPG", "G0278163.JPG"//,
-//            "G0048094.JPG", "G0288164.JPG",
-//            "G0258155.JPG",
-//            "G0228146.JPG", "G0258156.JPG",
-//            "G0228147.JPG", "G0258157.JPG",
-//            "G0168128.JPG", "G0228148.JPG",
-//            "G0038089.JPG",
-//            "G0038090.JPG", "G0108110.JPG", "G0168130.JPG",
-//            "G0038091.JPG", "G0108111.JPG", "G0178131.JPG",
-//            "G0048092.JPG", "G0108112.JPG", "G0278162.JPG"//, "G0308172.JPG"
+            "G0048093.JPG", "G0178133.JPG", "G0278163.JPG",
+            "G0048094.JPG", "G0288164.JPG",
+            "G0258155.JPG",
+            "G0228146.JPG", "G0258156.JPG",
+            "G0228147.JPG", "G0258157.JPG",
+            "G0168128.JPG", "G0228148.JPG",
+            "G0038089.JPG",
+            "G0038090.JPG", "G0108110.JPG", "G0168130.JPG",
+            "G0038091.JPG", "G0108111.JPG", "G0178131.JPG",
+            "G0048092.JPG", "G0108112.JPG", "G0278162.JPG"//, "G0308172.JPG"
             };
      Algo::CameraCalibration::CalibrationImageFilenames filenames;
      for (const char* fragment : filename_fragments) {
@@ -101,7 +102,38 @@ TEST_F(CameraCalibrationTest, FindsCalibrationResult) {
      }
      Algo::CameraCalibration calibration(filenames, 8, 8, 38);
      Algo::CameraCalibration::CalibrationResults::ptr results = calibration.runCalibration();
-     results->serialize();
+     results->serialize("/tmp/testjson.json");
+     Algo::CameraCalibration::CalibrationResults resultsReadFromDisk;
+     resultsReadFromDisk.deserialize("/tmp/testjson.json");
+     LOGI << resultsReadFromDisk.cameraMatrixK;
+}
+
+TEST_F(CameraCalibrationTest, BidirectionallySerializesCalibration) {
+    Algo::CameraCalibration::CalibrationResults results;
+    results.cameraMatrixK = (Mat_<double>(3, 3) << 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    results.distortionCoefficientsD = (Mat_<double>(8, 1) << 1, 2, 3, 4, 5, 6, 7, 8);
+    results.reprojectionError = 1.23456;
+    results.serialize("/tmp/bogusjson.json");
+    Algo::CameraCalibration::CalibrationResults resultsReadFromDisk;
+    resultsReadFromDisk.deserialize("/tmp/bogusjson.json");
+
+    std::function<void(Mat&, Mat&)> testmatrix = [](Mat& a, Mat& b)
+    {
+        EXPECT_EQ(a.rows,  b.rows);
+        EXPECT_EQ(a.cols,  b.cols);
+        for (int j = 0 ; j < a.rows; ++j)
+        {
+            for (int i = 0; i < a.cols; ++i)
+            {
+                EXPECT_EQ(a.at<double>(i, j), b.at<double>(i, j));
+            }
+        }
+    };
+
+    testmatrix(results.cameraMatrixK, resultsReadFromDisk.cameraMatrixK);
+    testmatrix(results.distortionCoefficientsD, resultsReadFromDisk.distortionCoefficientsD);
+    EXPECT_EQ(results.reprojectionError, resultsReadFromDisk.reprojectionError);
+
 }
 
 

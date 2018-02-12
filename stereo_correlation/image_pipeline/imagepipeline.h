@@ -3,6 +3,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include "imagepipelinestepbase.h"
 
 namespace Stereo
 {
@@ -13,24 +14,36 @@ namespace Stereo
  * act through the ImagePipeline as mediator in order to determine what exactly should be done to a pair
  * of images in order to create the proper output.
  *
- * @ The intent of this is to use derivatives of ImagePipelineStepBase to characterize the operations to be
- * done on an image; these will describe precisely what should be done when in order to provide the correct,
- * desired output. The ImagePipeline "listens" to the rest of the system in order to determine that certain
- * events (e.g. a dual-correlation being reached) should be used to create or modify a pipeline operation.
+ * @ The intent of this is to use subclasses of ImagePipelineStepBase to characterize the operations to be
+ * done on an image; these will describe precisely what should be done when in order to provide the correct
+ * desired output.
  *
  * Pipeline steps are themselves agnostic of the type of 3d image that is being created. This allows for
- * multiple pipelines to exist, or, more specifically, for ImagePipeline to exist as a tree. The tree will
+ * multiple pipelines to exist, or, more specifically, for ImagePipeline to exist as any DAG. The tree will
  * then be processed which allows, for instance, one common set of operations which fork to create an
- * anaglyph and a JPS file from the same pipeline.
+ * anaglyph and a JPS file from the same pipeline, or a series of steps in parallel that merge into a
+ * single trunk (for instance, open and undistort images, then combine them.)
  */
     class ImagePipeline
     {
-        typedef boost::adjacency_list<boost::vecS, boost::setS, boost::directedS> graph;
+        // The graph itself, which we use to do a topological sort of dependencies in order to execute
+        // the correct image processing set.
+        typedef boost::adjacency_list<boost::vecS, boost::setS, boost::directedS> dependency_graph;
 
     public:
       ImagePipeline();
 
-      graph m_graph;
+      void execute();
+      void dry_run();
+
+      // How many pipeline steps are there total (how many nodes)
+      int size() const {return num_vertices(this->m_graph);}
+
+      // Add a dependency - this is a node
+      void add_dependency(ImagePipelineStepBase::ptr dependant, ImagePipelineStepBase::ptr prerequisite);
+
+      dependency_graph m_graph;
+    protected:
     };
 
 }

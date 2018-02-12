@@ -24,6 +24,7 @@
 
 #include <plog/Log.h>
 #include <plog/Appenders/ConsoleAppender.h>
+#include <boost/assert.hpp>
 #include "metatyperegistration.h"
 #include "model/pointcloud.h"
 
@@ -44,9 +45,11 @@ inline void initialize()
         MetatypeRegistration reg;
         reg.doRegistration();
     }
-    // Initialize our stereo mesh and related types
-    PointCloud::initialize();
-#ifdef STEREO_TEST
+    // Initialize our stereo mesh and related types whenever app-leven config is necessary.
+    //PointCloud::initialize();
+
+    //Logging configuration
+#if defined(STEREO_TEST) || defined(STEREO_CLI)
     static plog::ConsoleAppender<plog::TxtFormatter> consoleAppender;
     plog::init(plog::verbose, &consoleAppender);
 #else

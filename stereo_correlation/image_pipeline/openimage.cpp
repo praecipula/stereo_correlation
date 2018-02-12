@@ -1,5 +1,7 @@
+#include <sstream>
 #include "openimage.h"
-#include <Magick++/Image.h>
+#include "algorithm/stereo/imagebase.h"
+#include "stereoexception.h"
 
 namespace Stereo
 {
@@ -16,7 +18,11 @@ namespace Stereo
   ImagePipelineStepBase::image_list OpenImage::execute(const ImagePipelineStepBase::image_list& inputs)
   {
       image_list images;
-      images.push_back(image_ptr(new Magick::Image(m_imageFilename)));
+      Algo::ImageBase::ptr image = Algo::ImageBase::load(m_imageFilename);
+      std::stringstream sstr;
+      sstr << "Could not load image " << m_imageFilename;
+      STEREO_LOG_ASSERT(!image->empty(), sstr.str());
+      images.push_back(image);
       return images;
   }
 }

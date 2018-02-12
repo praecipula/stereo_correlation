@@ -10,18 +10,19 @@ QT_CONFIG -= no-pkg-config
 
 CONFIG += c++11
 
-TARGET = stereo_correlation
+TARGET = stereo_cli
 TEMPLATE = app
 
 # Use homebrew's ImageMagick++ libraries. In future, perhaps build and distribute alongside.
 PKG_CONFIG = PKG_CONFIG_PATH=/usr/local/lib/pkgconfig /usr/local/bin/pkg-config
 CONFIG += link_pkgconfig
+CONFIG += console
 PKGCONFIG = ImageMagick++
 
 
 
-# This is only a test.
-DEFINES += "STEREO_TEST=1"
+# Command line app
+DEFINES += "STEREO_CLI=1"
 
 # Now set the locations of the source files
 INCLUDEPATH += ..
@@ -37,7 +38,7 @@ macx {
 
     # And our non-system libs.
     # We pre-populate them at the build dir, so that we link to their already-copied location.
-    BFRAMEWORK_DIR = $$OUT_PWD/stereo_correlation.app/Contents/Frameworks
+    BFRAMEWORK_DIR = $$OUT_PWD/stereo_cli.app/Contents/Frameworks
     DIST_DIR=$$OUT_PWD/../../dist/MACOSX
 
     prebuildcopytarget.commands += mkdir -p $$quote($$BFRAMEWORK_DIR) $$escape_expand(\\n\\t)
@@ -93,17 +94,10 @@ LIBS += -framework Googletest -framework Googletest,main \
 
 SOURCES += jsoncpp.cpp\
 imagecamera2d.cpp \
-stereocorrelation.cpp \
-widgets/qleftimagecanvaswidget.cpp \
-widgets/qrightimagecanvaswidget.cpp \
-widgets/qimagecanvaswidget.cpp \
-widgets/qstereomeshwidget.cpp \
-strcon.cpp \
 metatyperegistration.cpp \
 reticle.cpp \
 image_pipeline/imagepipelinestepbase.cpp \
 image_pipeline/saveimage.cpp \
-imageprocessingview.cpp \
 image_pipeline/imagepipeline.cpp \
 image_pipeline/openimage.cpp \
 image_pipeline/guiimagepipelinebuilder.cpp \
@@ -116,27 +110,18 @@ algorithm/stereo/disparity.cpp \
 algorithm/stereo/imagebase.cpp \
 model/stereo_hardware/camera.cpp \
 model/stereo_hardware/camerarelationship.cpp \
-widgets/qcomputationaldagwidget.cpp \
 roundededgeorthographictextablebox.cpp \
-distancefieldglfont.cpp \
-qtdistancefieldfonttexturegenerator.cpp\
-all_tests.cpp \ # Start with the tests now.
-../utility/tostringable.cpp
+    src/main.cpp \
+    ../strcon.cpp \
+    ../image_pipeline/camera_undistort.cpp
 
 
 HEADERS  += common.h \
 imagecamera2d.h \
-stereocorrelation.h \
-widgets/qleftimagecanvaswidget.h \
-widgets/qrightimagecanvaswidget.h \
-widgets/qimagecanvaswidget.h \
-widgets/qstereomeshwidget.h \
-strcon.h \
 metatyperegistration.h \
 reticle.h \
 image_pipeline/imagepipelinestepbase.h \
 image_pipeline/saveimage.h \
-imageprocessingview.h \
 image_pipeline/imagepipeline.h \
 image_pipeline/openimage.h \
 image_pipeline/guiimagepipelinebuilder.h \
@@ -144,15 +129,6 @@ algorithm/stereo/cameracalibration.h \
 model/workspace.h \
 model/coordinate.h \
 model/pointcloud.h \
-    widgets/qcomputationaldagwidget.h \
-    roundededgeorthographictextablebox.h \
-    distancefieldglfont.h \
-    qtdistancefieldfonttexturegenerator.h \
-    strcon_test.h \
-    qtdistancefieldfonttexturegenerator_test.h \
-    qstereomeshwidget_test.h \
-    stereomesh_test.h \
-    stereo_point_projection_test.h \
     ../model/stereo_hardware/camera.h \
     ../model/stereo_hardware/camerarelationship.h \
     ../algorithm/stereo/semiglobalblockmatching.h \
@@ -162,19 +138,17 @@ model/pointcloud.h \
     ../algorithm/stereo/projectpoints.h \
     ../algorithm/stereo/undistortedimage.h \
     ../model/pointcloud.h \
-    ../utility/tostringable.h \
-    camera_calibration_test.h \
-    image_pipeline_test.h
-
-FORMS    += forms/stereocorrelation.ui \
-forms/imageprocessingview.ui
+    ../strcon.h \
+    ../appresources.h \
+    ../image_pipeline/camera_undistort.h \
+    ../stereoexception.h
 
 # Copies the given files to the destination directory
 defineTest(copyToDestdir) {
     files = $$1
 
     for(FILE, files) {
-        DDIR = $$OUT_PWD/stereo_correlation.app/Contents/Resources
+        DDIR = $$OUT_PWD/stereo_cli.app/Contents/Resources
 
         # Replace slashes in paths with backslashes for Windows
         win32:FILE ~= s,/,\\,g
@@ -189,7 +163,7 @@ defineTest(copyDirToDestdir) {
     files = $$1
 
     for(FILE, files) {
-        DDIR = $$OUT_PWD/stereo_correlation.app/Contents/Resources
+        DDIR = $$OUT_PWD/stereo_cli.app/Contents/Resources
 
         # Replace slashes in paths with backslashes for Windows
         win32:FILE ~= s,/,\\,g
@@ -203,8 +177,10 @@ defineTest(copyDirToDestdir) {
 # Original assets
 copyToDestdir(../assets/reticle.png)
 
+copyDirToDestdir(../assets/camera_calibrations)
+
 # Test assets
-copyDirToDestdir(./assets/qtdistancefieldfonttexturegenerator_test)
-copyDirToDestdir(./assets/stereomesh_test)
-copyDirToDestdir(./assets/project_points_test)
-copyDirToDestdir(./assets/camera_calibration_test)
+# copyDirToDestdir(./assets/qtdistancefieldfonttexturegenerator_test)
+# copyDirToDestdir(./assets/stereomesh_test)
+# copyDirToDestdir(./assets/project_points_test)
+# copyDirToDestdir(./assets/camera_calibration_test)

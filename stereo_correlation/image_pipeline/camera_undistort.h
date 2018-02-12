@@ -1,0 +1,4 @@
+#ifndef CAMERA_UNDISTORT_H
+#define CAMERA_UNDISTORT_H
+
+#endif // CAMERA_UNDISTORT_H

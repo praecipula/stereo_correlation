@@ -19,16 +19,19 @@ namespace Stereo
      *
      * This may turn into an abstract factory pattern, if we do make a scriptable
      * interface.
+     *
+     * TODO: this is obsolete. Instead, we should only display the GUI-fied parts of the
+     * pointers built with ImagePipeline
      */
 class GuiImagePipelineBuilder
 {
 public:
     GuiImagePipelineBuilder();
 
-    typedef boost::function<ImagePipelineStepBase::ptr(GuiImagePipelineBuilder*)> fn_ptr;
+    typedef boost::function<ImagePipelineStepBase::weak_ptr(GuiImagePipelineBuilder*)> fn_ptr;
 
-    ImagePipelineStepBase::ptr buildOpenImage();
-    ImagePipelineStepBase::ptr buildSaveImage();
+    ImagePipelineStepBase::shared_ptr buildOpenImage();
+    ImagePipelineStepBase::shared_ptr buildSaveImage();
 
 };
 }

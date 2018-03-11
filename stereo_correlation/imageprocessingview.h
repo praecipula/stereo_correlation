@@ -20,7 +20,8 @@ namespace Stereo
 
   public:
 
-    typedef std::vector<ImagePipelineStepBase::ptr> processing_steps;
+    // TODO: obsolete -we should be displaying the DAG from ImagePipeline
+    typedef std::vector<ImagePipelineStepBase::weak_ptr> processing_steps;
     // A mapping from a string (deprecated: should be widget), such as Open Image, to the
     // guiimagepipelinebuilder function that constructs that step.
     typedef std::map<std::string, GuiImagePipelineBuilder::fn_ptr> string_mapping;

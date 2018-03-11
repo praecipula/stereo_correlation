@@ -13,7 +13,8 @@ namespace Stereo
     public:
 
         // The pipeline is assembled as a std List or Vector (anything forward iterable) of these pointers.
-        typedef std::shared_ptr<ImagePipelineStepBase> ptr;
+        typedef std::shared_ptr<ImagePipelineStepBase> shared_ptr;
+        typedef std::weak_ptr<ImagePipelineStepBase> weak_ptr;
 
         // The type of a pointer to an image used in each step
         typedef std::shared_ptr<Stereo::Algo::ImageBase> image_ptr;

@@ -7,12 +7,12 @@ namespace Stereo
 
   }
 
-  ImagePipelineStepBase::ptr GuiImagePipelineBuilder::buildOpenImage()
+  ImagePipelineStepBase::shared_ptr GuiImagePipelineBuilder::buildOpenImage()
   {
 
   }
 
-  ImagePipelineStepBase::ptr GuiImagePipelineBuilder::buildSaveImage()
+  ImagePipelineStepBase::shared_ptr GuiImagePipelineBuilder::buildSaveImage()
   {
 
   }

@@ -3,7 +3,6 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/directed_graph.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include "imagepipelinestepbase.h"
 
 namespace Stereo
@@ -49,8 +48,7 @@ namespace Stereo
          * effectively.
          */
         struct PipelineEdgeProperties {
-            ImagePipelineStepBase::image_ptr image;
-            boost::property_tree::ptree metadata;
+            ImagePipelineStepBase::ImagePipelineData data;
         };
 
 
@@ -98,6 +96,9 @@ namespace Stereo
       OrderedSteps evaluate_processing_order() const;
 
 
+      //*** Loading and saving the model state
+      void save(std::string filename);
+      static ImagePipeline load(std::string filename);
 
       DependencyGraph m_graph;
     protected:

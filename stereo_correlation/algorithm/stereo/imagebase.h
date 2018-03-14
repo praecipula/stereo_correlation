@@ -1,6 +1,7 @@
 #ifndef IMAGEBASE
 #define IMAGEBASE
 
+#include <boost/crc.hpp>
 #include <opencv2/core/mat.hpp>
 #include <memory>
 #include <string>
@@ -26,6 +27,8 @@ namespace Stereo
 
             typedef std::shared_ptr<ImageBase> ptr;
             typedef std::shared_ptr<const ImageBase> const_ptr;
+
+            typedef uint32_t checksum;
 
             static ImageBase::ptr load(const string& filename);
             static ImageBase::ptr loadGrayscale(const string& filename);
@@ -53,6 +56,10 @@ namespace Stereo
             /** Save the image
               */
             void save(const string& filename);
+
+            /** Compute a CRC checksum of the image data
+              */
+            checksum crc() const;
 
         };
 

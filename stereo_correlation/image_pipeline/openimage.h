@@ -19,7 +19,8 @@ namespace Stereo
 
       void set_filename(const std::string& imageFilename);
 
-      virtual image_list execute(const image_list &inputs);
+      virtual DataList execute(const DataList& inputs);
+
       std::string m_imageFilename;
     };
 

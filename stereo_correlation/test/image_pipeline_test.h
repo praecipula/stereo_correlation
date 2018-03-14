@@ -30,7 +30,7 @@ struct RememberNumber : public ImagePipelineStepBase
     typedef std::shared_ptr<RememberNumber> shared_ptr;
 
     RememberNumber(int num) {number = num;}
-    image_list execute(const image_list& inputs){return inputs;}
+    DataList execute(const DataList& inputs){return inputs;}
     int number;
 };
 
@@ -70,4 +70,12 @@ TEST_F(ImagePipelineTest, PipelineCanBeTopologiallySorted) {
     it++;
     EXPECT_EQ(std::dynamic_pointer_cast<RememberNumber>(it->lock())->number, 3);
 }
+
+TEST_F(ImagePipelineTest, PipelineCanBeSavedToFile) {
+    FriendlyImagePipeline pipe;
+    RememberNumber::shared_ptr num_one = RememberNumber::shared_ptr(new RememberNumber(1));
+    FriendlyImagePipeline::PipelineStepId h_num_one = pipe.add_node(num_one);
+    pipe.save("/tmp/pipetest.3dp");
+}
+
 #endif // IMAGE_PIPELINE_TEST

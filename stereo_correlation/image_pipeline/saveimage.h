@@ -25,7 +25,7 @@ namespace Stereo
       // Deprecated
       void promptForFilename();
 
-      virtual image_list execute(const image_list& inputs);
+      virtual DataList execute(const DataList& inputs);
 
     protected:
       std::string m_filename;

@@ -1,4 +1,6 @@
 #include <boost/graph/topological_sort.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include "imagepipeline.h"
 #include "stereoexception.h"
 
@@ -6,6 +8,7 @@ namespace Stereo
 {
 
     using namespace boost;
+    namespace pt = boost::property_tree;
 
     ImagePipeline::ImagePipeline():
         m_graph()
@@ -54,6 +57,22 @@ namespace Stereo
             unowned_steps.push_back(weak);
         }
         return unowned_steps;
+    }
+
+    void ImagePipeline::save(std::string filename)
+    {
+        // Metadata: the version of the ImagePipeline, date saved, etc...
+        pt::ptree tree;
+        tree.put("image_pipeline_version", "1.0");
+        pt::write_json(filename, tree);
+
+        // Define the nodes - their types and properties
+        // Define the edges to connect the nodes together
+    }
+
+    ImagePipeline load(std::string filename)
+    {
+
     }
 
 }

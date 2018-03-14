@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include "algorithm/stereo/imagebase.h"
+#include <boost/property_tree/ptree.hpp>
 
 namespace Stereo
 {
@@ -18,8 +19,15 @@ namespace Stereo
 
         // The type of a pointer to an image used in each step
         typedef std::shared_ptr<Stereo::Algo::ImageBase> image_ptr;
-        // A list of images
-        typedef std::vector<image_ptr> image_list;
+        // A memo of boost property tree
+        typedef boost::property_tree::ptree memo;
+        // These are the input and output types that get processed.
+        struct ImagePipelineData {
+            ImagePipelineStepBase::image_ptr image;
+            memo metadata;
+        };
+        // What actually gets passed around is a list of the data struct.
+        typedef std::list<ImagePipelineData> DataList;
 
 
         /*
@@ -31,12 +39,12 @@ namespace Stereo
         ImagePipelineStepBase();
         virtual ~ImagePipelineStepBase() {}
 
-        /* An execution step takes one or more images and a "memo" and returns one or more transformed images.
+        /* An execution step takes one or more image + "memo" and returns one or more transformed images.
      * Inheritors of this class have the option to either create new images or to transform an existing
      * image and return those; it should not be assumed that the outputs are the same images
      * as the inputs for this reason.
      */
-        virtual image_list execute(const image_list& inputs) = 0;
+        virtual DataList execute(const DataList& inputs) = 0;
 
     };
 

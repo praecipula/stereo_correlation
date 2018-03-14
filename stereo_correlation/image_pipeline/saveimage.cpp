@@ -12,10 +12,12 @@ namespace Stereo
  * Save the image at m_filename, and then return an empty image_list.
  * If m_filename is unset, this will prompt the user for a filename.
  */
-    ImagePipelineStepBase::image_list SaveImage::execute(const ImagePipelineStepBase::image_list &inputs)
+    ImagePipelineStepBase::DataList SaveImage::execute(const ImagePipelineStepBase::DataList &inputs)
     {
         STEREO_LOG_ASSERT(!m_filename.empty(), "No filename for image saving");
-        inputs.front()->save(m_filename);
-        return image_list();
+        inputs.front().image->save(m_filename);
+        // This terminates the execution - there are no more images to pass.
+        // Just pass back an empty data list.
+        return ImagePipelineStepBase::DataList();
     }
 }

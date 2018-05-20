@@ -64,10 +64,16 @@ namespace Stereo
         // Metadata: the version of the ImagePipeline, date saved, etc...
         pt::ptree tree;
         tree.put("image_pipeline_version", "1.0");
+        // Topologically sorted pipeline
+        ImagePipeline::OrderedSteps steps = this->evaluate_processing_order();
+        for (ImagePipeline::OrderedSteps::iterator i = steps.begin();
+             i != steps.end();
+             ++i)
+        {
+            ImagePipelineStepBase::weak_ptr p = *i;
+            p.lock()->append_for_save(tree);
+        }
         pt::write_json(filename, tree);
-
-        // Define the nodes - their types and properties
-        // Define the edges to connect the nodes together
     }
 
     ImagePipeline load(std::string filename)

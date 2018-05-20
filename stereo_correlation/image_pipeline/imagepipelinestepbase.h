@@ -22,6 +22,12 @@ namespace Stereo
         // A memo of boost property tree
         typedef boost::property_tree::ptree memo;
         // These are the input and output types that get processed.
+        // The general flow is for each ImagePipelineStepBase class to modify or
+        // transform image in some way and append its metadata to the memo at
+        // that step.
+        // TODO: perhaps have memo be a property of the pipeline itself? This would be
+        // space-efficient, but we lose the command-pattern-like ability to see the
+        // modifications at each step.
         struct ImagePipelineData {
             ImagePipelineStepBase::image_ptr image;
             memo metadata;
@@ -37,6 +43,7 @@ namespace Stereo
      * after construction and before execution
      */
         ImagePipelineStepBase();
+        ImagePipelineStepBase(const memo& metadata);
         virtual ~ImagePipelineStepBase() {}
 
         /* An execution step takes one or more image + "memo" and returns one or more transformed images.
@@ -46,6 +53,20 @@ namespace Stereo
      */
         virtual DataList execute(const DataList& inputs) = 0;
 
+        /* append this node in a parent property tree. The standard implementation in this parent class makes
+         * the following assumptions:
+         *
+         * 1) The child class has implemented functions get_key and get_version
+         * 2) The child class can be iterated over at a single level to be appended.
+         */
+        virtual void append_for_save(memo& parent);
+
+        /* Construct this node from a property tree memo
+         */
+        static ImagePipelineStepBase::shared_ptr load(memo metadata);
+
+    protected:
+        memo m_metadata;
     };
 
 }

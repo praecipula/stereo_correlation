@@ -164,7 +164,8 @@ model/pointcloud.h \
     ../model/pointcloud.h \
     ../utility/tostringable.h \
     camera_calibration_test.h \
-    image_pipeline_test.h
+    image_pipeline_test.h \
+    openimage_test.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

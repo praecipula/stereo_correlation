@@ -13,15 +13,19 @@ namespace Stereo
     class OpenImage : public ImagePipelineStepBase
     {
     public:
-      OpenImage(const std::string& imageFilename);
-      OpenImage(const OpenImage& other);
-      virtual ~OpenImage() {}
+        static const std::string key;
+        static const std::string version;
 
-      void set_filename(const std::string& imageFilename);
+        OpenImage(const std::string& imageFilename);
+        OpenImage(const memo& metadata);
+        OpenImage(const OpenImage& other);
+        virtual ~OpenImage() {}
 
-      virtual DataList execute(const DataList& inputs);
+        std::string filename() const;
+        void set_filename(const std::string& imageFilename);
 
-      std::string m_imageFilename;
+        virtual DataList execute(const DataList& inputs);
+        static ImagePipelineStepBase::shared_ptr load(memo metadata);
     };
 
 }

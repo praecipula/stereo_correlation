@@ -14,7 +14,7 @@ namespace Stereo
      * An object that immediately logs to our error logger and can be thrown, constructed via
      * a macro for convenience.
      */
-    struct AssertionFailure : public exception
+    struct AssertionFailure : public std::exception
     {
     public:
         AssertionFailure(char const* expression, char const* function, char const* file, long line, char const* message = NULL) :

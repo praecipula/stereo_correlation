@@ -59,7 +59,7 @@ namespace Stereo
         return unowned_steps;
     }
 
-    void ImagePipeline::save(std::string filename)
+    pt::ptree ImagePipeline::prepare_to_serialize() const
     {
         // Metadata: the version of the ImagePipeline, date saved, etc...
         pt::ptree tree;
@@ -73,12 +73,39 @@ namespace Stereo
             ImagePipelineStepBase::weak_ptr p = *i;
             p.lock()->append_for_save(tree);
         }
+        return tree;
+    }
+
+    std::string ImagePipeline::serialize() const
+    {
+        std::string serialized;
+        pt::ptree tree = this->prepare_to_serialize();
+        pt::write_json(serialized, tree);
+        return serialized;
+    }
+
+    void ImagePipeline::save(std::string filename)
+    {
+        pt::ptree tree = this->prepare_to_serialize();
         pt::write_json(filename, tree);
     }
 
     ImagePipeline load(std::string filename)
     {
+        //TODO
+    }
 
+    std::list<std::string> ImagePipeline::dry_run() const
+    {
+        std::list<std::string> processing_steps;
+        OrderedSteps steps = this->evaluate_processing_order();
+        for (OrderedSteps::iterator it = steps.begin();
+             it != steps.end();
+             ++it)
+        {
+            processing_steps.push_back((it->lock())->key());
+        }
+        return processing_steps;
     }
 
 }

@@ -3,10 +3,14 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/directed_graph.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "imagepipelinestepbase.h"
 
 namespace Stereo
 {
+
+    using namespace boost;
+    namespace pt = boost::property_tree;
 
     /**
  * @brief The ImagePipeline class is the central location to manage incoming signals and calculate what
@@ -68,13 +72,10 @@ namespace Stereo
 
       ImagePipeline();
 
-      //void execute();
-      //void dry_run();
-
       // How many pipeline steps are there total (how many nodes)
       int size() const {return num_vertices(this->m_graph);}
 
-      /* Add a node to the graph. It is initially not dependent on other nodes, nor do any nodes
+      /** Add a node to the graph. It is initially not dependent on other nodes, nor do any nodes
       * depend on it.
       * ***NOTE*** Transfers ownership from wherever the node was constructed to the pipeline.
       * All other operations will provide and return weak pointers.
@@ -84,24 +85,33 @@ namespace Stereo
       */
       PipelineStepId add_node(ImagePipelineStepBase::shared_ptr node);
 
-      /*
+      /**
        * Construct the processing step dependency, such that the output of prerequisite will be fed into the
        * input of dependant when the processing DAG is evaluated.
        */
       void add_dependency(PipelineStepId dependant, PipelineStepId prerequisite);
 
-      /*
+      /**
        * Build the topologically-sorted dependency list.
        */
       OrderedSteps evaluate_processing_order() const;
 
+      /**
+       * Do a dry run:
+       * This will iterate over the nodes in the same order that we would execute them,
+       * but just concatenate the execution order of the nodes in the graph.
+       */
+      std::list<std::string> dry_run() const;
 
       //*** Loading and saving the model state
+    protected:
+      pt::ptree prepare_to_serialize() const;
+    public:
+      std::string serialize() const;
       void save(std::string filename);
       static ImagePipeline load(std::string filename);
 
       DependencyGraph m_graph;
-    protected:
 
     };
 

@@ -6,16 +6,16 @@
 namespace Stereo
 {
 
-    const std::string OpenImage::key = "open_image";
-    const std::string OpenImage::version = "1.0";
+    const std::string OpenImage::s_key = "open_image";
+    const std::string OpenImage::s_version = "1.0";
 
     OpenImage::OpenImage(const std::string& imageFilename):
         ImagePipelineStepBase()
     {
         memo data;
         data.put("filename", imageFilename);
-        data.put("version", OpenImage::version);
-        m_metadata.add_child(OpenImage::key, data);
+        data.put("version", OpenImage::s_version);
+        m_metadata.add_child(this->key(), data);
     }
 
     OpenImage::OpenImage(const memo& metadata):
@@ -28,12 +28,17 @@ namespace Stereo
 
     std::string OpenImage::filename() const
     {
-        return this->m_metadata.get_child(OpenImage::key).get<std::string>("filename");
+        return this->data().get<std::string>("filename");
     }
 
     void OpenImage::set_filename(const string &imageFilename)
     {
-        this->m_metadata.get_child(OpenImage::key).put("filename", imageFilename);
+        this->data().put("filename", imageFilename);
+    }
+
+    std::string OpenImage::checksum() const
+    {
+        return this->data().get<std::string>("checksum", "");
     }
 
     ImagePipelineStepBase::DataList OpenImage::execute(const ImagePipelineStepBase::DataList& inputs)
@@ -56,7 +61,7 @@ namespace Stereo
         // This can be used to "fingerprint" a file later to be sure it was the same one.
         metadata.put("checksum", data.image->crc());
         // Metadata goes under "open_image" key
-        data.metadata.add_child(OpenImage::key, metadata);
+        data.metadata.add_child(this->key(), metadata);
         // There's one and only one data in the list.
         images.push_back(data);
         return images;

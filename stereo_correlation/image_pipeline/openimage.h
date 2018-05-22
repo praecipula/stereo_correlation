@@ -13,8 +13,8 @@ namespace Stereo
     class OpenImage : public ImagePipelineStepBase
     {
     public:
-        static const std::string key;
-        static const std::string version;
+        static const std::string s_key;
+        static const std::string s_version;
 
         OpenImage(const std::string& imageFilename);
         OpenImage(const memo& metadata);
@@ -24,8 +24,14 @@ namespace Stereo
         std::string filename() const;
         void set_filename(const std::string& imageFilename);
 
+        std::string checksum() const;
+
         virtual DataList execute(const DataList& inputs);
+        virtual std::string key() const {return OpenImage::s_key;}
         static ImagePipelineStepBase::shared_ptr load(memo metadata);
+
+    protected:
+        ImagePipelineStepBase::memo data() const {return this->m_metadata.get_child(this->key());}
     };
 
 }

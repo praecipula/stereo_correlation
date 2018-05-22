@@ -8,6 +8,7 @@
 #include "qstereomeshwidget_test.h"
 #include "camera_calibration_test.h"
 #include "image_pipeline_test.h"
+#include "openimage_test.h"
 
 
 int main(int argc, char **argv) {

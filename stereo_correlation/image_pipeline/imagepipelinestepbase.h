@@ -53,6 +53,14 @@ namespace Stereo
      */
         virtual DataList execute(const DataList& inputs) = 0;
 
+        /**
+         * @brief The subclass-specific key defined for the operation
+         * @return The key. This is a static member, but each subclass is expected to
+         * implement this as a basic return of this static member. [This is highly likely
+         * to be inlined by the compiler.]
+         */
+        virtual std::string key() const = 0;
+
         /* append this node in a parent property tree. The standard implementation in this parent class makes
          * the following assumptions:
          *

@@ -56,6 +56,11 @@ struct RememberNumber : public ImagePipelineStepBase
     }
     //Memo "copy constructor" passed to super
     RememberNumber(memo meta): ImagePipelineStepBase(meta) {}
+    virtual std::string describe() const {
+        std::stringstream stream;
+        stream << this->key() << ": " << this->number();
+        return stream.str();
+    }
     // Basically a no-op of the inputs.
     DataList execute(const DataList& inputs){return inputs;}
     virtual std::string key() const {return RememberNumber::s_key;}
@@ -134,13 +139,12 @@ TEST_F(ImagePipelineTest, PipelineCanBeDryRunned) {
     pipe.add_dependency(h_num_three, h_num_one);
     // Generate the dry run log
     std::list<std::string> execution_log = pipe.dry_run();
-    // Two then one then three
-    for (std::list<std::string>::iterator it = execution_log.begin();
-         it != execution_log.end();
-         it++)
-    {
-        std::cout << *it;
-    }
+    std::list<std::string>::iterator it = execution_log.begin();
+    EXPECT_EQ(*it, "remember_number: 2");
+    ++it;
+    EXPECT_EQ(*it, "remember_number: 1");
+    ++it;
+    EXPECT_EQ(*it, "remember_number: 3");
 }
 
 #endif // IMAGE_PIPELINE_TEST

@@ -103,7 +103,7 @@ namespace Stereo
              it != steps.end();
              ++it)
         {
-            processing_steps.push_back((it->lock())->key());
+            processing_steps.push_back((it->lock())->describe());
         }
         return processing_steps;
     }

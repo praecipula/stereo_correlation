@@ -41,6 +41,13 @@ namespace Stereo
         return this->data().get<std::string>("checksum", "");
     }
 
+    std::string OpenImage::describe() const
+    {
+        std::stringstream stream;
+        stream << "Open: " << this->filename();
+        return stream.str();
+    }
+
     ImagePipelineStepBase::DataList OpenImage::execute(const ImagePipelineStepBase::DataList& inputs)
     {
         //TODO: do we assert that inputs is empty here?

@@ -26,6 +26,7 @@ namespace Stereo
 
         std::string checksum() const;
 
+        virtual std::string describe() const;
         virtual DataList execute(const DataList& inputs);
         virtual std::string key() const {return OpenImage::s_key;}
         static ImagePipelineStepBase::shared_ptr load(memo metadata);

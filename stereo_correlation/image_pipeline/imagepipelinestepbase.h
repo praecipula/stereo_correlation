@@ -4,11 +4,14 @@
 #include "common.h"
 #include <memory>
 #include <vector>
-#include "algorithm/stereo/imagebase.h"
 #include <boost/property_tree/ptree.hpp>
+#include "algorithm/stereo/imagebase.h"
 
 namespace Stereo
 {
+    // Forward-declare this class
+    class ImagePipeline;
+
     class ImagePipelineStepBase
     {
     public:
@@ -17,27 +20,8 @@ namespace Stereo
         typedef std::shared_ptr<ImagePipelineStepBase> shared_ptr;
         typedef std::weak_ptr<ImagePipelineStepBase> weak_ptr;
 
-        // The type of a pointer to an image used in each step
-        typedef std::shared_ptr<Stereo::Algo::ImageBase> image_ptr;
         // A memo of boost property tree
         typedef boost::property_tree::ptree memo;
-        // These are the input and output types that get processed.
-        // The general flow is for each ImagePipelineStepBase class to modify or
-        // transform image in some way and append its metadata to the memo at
-        // that step.
-        // TODO: perhaps have memo be a property of the pipeline itself? This would be
-        // space-efficient, but we lose the command-pattern-like ability to see the
-        // modifications at each step.
-        struct ImagePipelineData {
-            ImagePipelineStepBase::image_ptr image;
-            memo metadata;
-        };
-        // What actually gets passed around is a list of the data struct.
-        typedef std::list<ImagePipelineData> DataList;
-
-        /****
-         * Creating a pipeline step and deserialization
-         ****/
 
         /*
         * All image pipeline steps must be default-constructable AND copy-constructable.
@@ -81,14 +65,20 @@ namespace Stereo
         virtual std::string describe() const = 0;
 
         /**
-        * @brief An execution step takes one or more image + "memo" and returns one or more transformed images.
+        * @brief execute this node in the graph.
         *
-        * Inheritors of this class have the option to either create new images or to transform an existing
-        * image and return those; it should not be assumed that the outputs are the same images
-        * as the inputs for this reason.
+        * The inputs and outputs expected by this node are either set/constructed on the node (think
+        * supplying a filename to OpenImage) or can be determined from the graph (think correlating
+        * the left and right images to produce a single image). In general, the DAG is a directed
+        * dependency graph, so there is no result other than to change the current state of the
+        * DAG during processing. So, for instance, after correlation, we might end up with one node
+        * for the correlation with the metadata we want, and that node knows how to get the correct
+        * left and right images (even if it's going to an upstream node to get them) and this node
+        * can be upstream of both a create anaglyph and create JPS downstream node, both of which
+        * expect to get the images.
         * @return none
         */
-        virtual DataList execute(const DataList& inputs) = 0;
+        virtual void execute(const ImagePipeline& pipeline) = 0;
 
         /**
         * @brief The subclass-specific key defined for the operation
@@ -99,7 +89,6 @@ namespace Stereo
         * The point of making it pure virtual is to remind subclasses to do this.
         */
         virtual std::string key() const = 0;
-
 
 
     protected:

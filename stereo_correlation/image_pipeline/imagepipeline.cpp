@@ -11,16 +11,34 @@ namespace Stereo
     namespace pt = boost::property_tree;
 
     ImagePipeline::ImagePipeline():
-        m_graph()
+        m_graph(),
+        m_reverse_map()
     {
 
     }
 
     ImagePipeline::PipelineStepId ImagePipeline::add_node(ImagePipelineStepBase::shared_ptr node)
     {
+        /* Add to the graph. This takes ownership (and everyone with an external shared_ptr should
+            know that dereferencing is safe and should use the returned ID.
+        */
         PipelineStepId id = add_vertex(this->m_graph);
+        // Insert the value of the shared ptr's address as the key to get the id later if needed
+        this->m_reverse_map.insert(std::make_pair(node.get(), id));
+        // Set the processing step in the node properties
         this->m_graph[id].processing_step = node;
         return id;
+    }
+
+    ImagePipeline::PipelineStepId ImagePipeline::id_for_pipeline_step_ptr(const ImagePipelineStepBase* for_this_node) const
+    {
+        try {
+            return m_reverse_map.at(for_this_node);
+        } catch (const std::range_error& e) {
+            std::stringstream sstr;
+            sstr << "Pointer to processing step missing from pipeline reverse lookup map " << for_this_node;
+            STEREO_LOG_ASSERT(false, sstr.str());
+        }
     }
 
     void ImagePipeline::add_dependency(PipelineStepId dependant, PipelineStepId prerequisite)
@@ -30,6 +48,22 @@ namespace Stereo
         step_added_data = add_edge(dependant, prerequisite, this->m_graph);
         // Likely in the future add something like "last processed time" to show the edge has not been
         // processed.
+    }
+
+    ImagePipeline::OrderedSteps ImagePipeline::get_dependencies(const ImagePipelineStepBase* const for_this_node) const
+    {
+        ImagePipeline::OrderedSteps dependencies;
+        ImagePipeline::PipelineStepId id = id_for_pipeline_step_ptr(for_this_node);
+        dependency_iter_range range = out_edges(id, this->m_graph);
+        for(ImagePipeline::dependencies_iter i = range.first;
+            i != range.second;
+            ++i)
+        {
+            PipelineStepId dependencies_id = target(*i, this->m_graph);
+            ImagePipelineStepBase::weak_ptr weak(this->m_graph[dependencies_id].processing_step);
+            dependencies.push_back(weak);
+        }
+        return dependencies;
     }
 
     /* Topo sort to get the dependency ordering.

@@ -62,7 +62,7 @@ struct RememberNumber : public ImagePipelineStepBase
         return stream.str();
     }
     // Basically a no-op of the inputs.
-    DataList execute(const DataList& inputs){return inputs;}
+    void execute(const ImagePipeline& graph){return;}
     virtual std::string key() const {return RememberNumber::s_key;}
 
     // Accessors should reach into the metadata memo to get any property that

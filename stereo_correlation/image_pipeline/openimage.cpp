@@ -1,7 +1,11 @@
 #include <sstream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include "openimage.h"
 #include "algorithm/stereo/imagebase.h"
 #include "stereoexception.h"
+#include "image_pipeline/imagepipeline.h"
+
 
 namespace Stereo
 {
@@ -33,12 +37,28 @@ namespace Stereo
 
     void OpenImage::set_filename(const string &imageFilename)
     {
-        this->data().put("filename", imageFilename);
+        this->mutable_data().put("filename", imageFilename);
     }
 
-    std::string OpenImage::checksum() const
+    OpenImage::hex_string OpenImage::checksum() const
     {
-        return this->data().get<std::string>("checksum", "");
+        return this->data().get<OpenImage::hex_string>("checksum", "");
+    }
+
+    void OpenImage::set_checksum(const Algo::ImageBase::checksum &sum)
+    {
+        /* We can't use data accessor, as it's public interface is a const
+         * copy of what's at our key, so have to do this manually.
+         * Additionally, we want to convert from the image base's checksum
+         * (uint32_t at this time) to a hex string so it looks more
+         * checksummy in the JSON.
+         */
+        std::stringstream stream;
+        stream <<"0x"
+               << std::setfill ('0') << std::setw(sizeof(Algo::ImageBase::checksum)*2)
+               << std::hex << sum;
+        std::string converted(stream.str());
+        this->mutable_data().put<OpenImage::hex_string>("checksum", converted);
     }
 
     std::string OpenImage::describe() const
@@ -48,30 +68,18 @@ namespace Stereo
         return stream.str();
     }
 
-    ImagePipelineStepBase::DataList OpenImage::execute(const ImagePipelineStepBase::DataList& inputs)
+    void OpenImage::execute(const ImagePipeline& pipeline)
     {
-        //TODO: do we assert that inputs is empty here?
-        ImagePipelineStepBase::DataList images;
+        // TODO: do we assert that inputs is empty here?
+        // This is basically the first reasonable thing we do at this point.
+        ImagePipeline::OrderedSteps deps = pipeline.get_dependencies(this);
         // Open the image and check for success
         Algo::ImageBase::ptr image = Algo::ImageBase::load(this->filename());
         std::stringstream sstr;
         sstr << "Could not load image " << this->filename();
         STEREO_LOG_ASSERT(!image->empty(), sstr.str());
-        // Set the image in the data
-        ImagePipelineStepBase::ImagePipelineData data;
-        data.image = image;
-        // Metadata: the filename that was given to us
-        ImagePipelineStepBase::memo metadata;
-        metadata.put("filename", this->filename());
-        metadata.put("version", 1);
-        // For double-checking sake, calculate a checksum.
-        // This can be used to "fingerprint" a file later to be sure it was the same one.
-        metadata.put("checksum", data.image->crc());
-        // Metadata goes under "open_image" key
-        data.metadata.add_child(this->key(), metadata);
-        // There's one and only one data in the list.
-        images.push_back(data);
-        return images;
+        // Set our checksum for sanity for loading in the future.
+        this->set_checksum(image->crc());
     }
 
     static ImagePipelineStepBase::shared_ptr load(ImagePipelineStepBase::memo metadata)

@@ -13,6 +13,8 @@ namespace Stereo
     class OpenImage : public ImagePipelineStepBase
     {
     public:
+        typedef std::shared_ptr<OpenImage> shared_ptr;
+
         static const std::string s_key;
         static const std::string s_version;
 
@@ -24,15 +26,24 @@ namespace Stereo
         std::string filename() const;
         void set_filename(const std::string& imageFilename);
 
-        std::string checksum() const;
+        // Typedef for clarity
+        typedef std::string hex_string;
+        hex_string checksum() const;
+
+        // Return a const copy of the metadata under the key for quick property inspection.
+        ImagePipelineStepBase::memo data() const {return this->m_metadata.get_child(this->key());}
 
         virtual std::string describe() const;
-        virtual DataList execute(const DataList& inputs);
+        virtual void execute(const ImagePipeline& pipeline);
         virtual std::string key() const {return OpenImage::s_key;}
         static ImagePipelineStepBase::shared_ptr load(memo metadata);
 
     protected:
-        ImagePipelineStepBase::memo data() const {return this->m_metadata.get_child(this->key());}
+        void set_checksum(const Algo::ImageBase::checksum& sum);
+        // Return a mutable reference to the data under the key for quick property inspection.
+        // This helps a lot in cases where we accidentally would put() to the data returned from the
+        // const version, which is a copy for the outside world to prevent dangling references.
+        ImagePipelineStepBase::memo& mutable_data() {return this->m_metadata.get_child(this->key());}
     };
 
 }

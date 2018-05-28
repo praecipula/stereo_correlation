@@ -1,6 +1,7 @@
 #ifndef IMAGEPIPELINE_H
 #define IMAGEPIPELINE_H
 
+#include <unordered_map>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/directed_graph.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -16,14 +17,14 @@ namespace Stereo
  * @brief The ImagePipeline class is the central location to manage incoming signals and calculate what
  * needs to be done to an image in order to properly process it. It constructs a set of operations, which
  * act through the ImagePipeline as mediator in order to determine what exactly should be done to a pair
- * of images in order to create the proper output.
+ * of images from the camera in order to create the proper output.
  *
- * @ The intent of this is to use subclasses of ImagePipelineStepBase to characterize the operations to be
+ * The intent of this is to use subclasses of ImagePipelineStepBase to characterize the operations to be
  * done on an image; these will describe precisely what should be done when in order to provide the correct
  * desired output.
  *
  * Pipeline steps are themselves agnostic of the type of 3d image that is being created. This allows for
- * multiple pipelines to exist, or, more specifically, for ImagePipeline to exist as any DAG. The tree will
+ * multiple pipelines to exist, or, more specifically, for ImagePipeline to exist as any DAG. This will
  * then be processed which allows, for instance, one common set of operations which fork to create an
  * anaglyph and a JPS file from the same pipeline, or a series of steps in parallel that merge into a
  * single trunk (for instance, open and undistort images, then combine them.)
@@ -45,29 +46,25 @@ namespace Stereo
         };
 
         /*
-         * Each edge has (maybe) an image and (maybe) metadata associated with it.
-         * re: maybe an image, think of a "Save this image to a file" step that effectively
-         * has no output
-         * re: maybe metadata, some steps are fully self-contained and need no data to work
-         * effectively.
+         * Reserved for future use
          */
         struct PipelineEdgeProperties {
-            ImagePipelineStepBase::ImagePipelineData data;
         };
 
 
     public:
 
-      //This is the type of the graph that we store internally for keeping track of the pipeline
-      typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
+        //This is the type of the graph that we store internally for keeping track of the pipeline
+        typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
         PipelineVertexProperties, PipelineEdgeProperties> DependencyGraph;
-      // This is the type of the ID that comes back from adding a vertex (for bundled properties, say)
-      // Since the most significant element in the vertex is an image pipeline step base, call it a step id.
-      typedef boost::graph_traits<DependencyGraph>::vertex_descriptor PipelineStepId;
-      // Thi sis the type of ID from the edges for those bundled properties
-      typedef boost::graph_traits<DependencyGraph>::edge_descriptor PipelineEdgeId;
-      // A topological sort returns an in-order-of-steps dependency list
-      typedef std::list<ImagePipelineStepBase::weak_ptr> OrderedSteps;
+        // This is the type of the ID that comes back from adding a vertex (for bundled properties, say)
+        // Since the most significant element in the vertex is an image pipeline step base, call it a step id.
+        typedef boost::graph_traits<DependencyGraph>::vertex_descriptor PipelineStepId;
+        // Thi sis the type of ID from the edges for those bundled properties
+        typedef boost::graph_traits<DependencyGraph>::edge_descriptor PipelineEdgeId;
+        // A topological sort returns an in-order-of-steps dependency list
+        typedef std::list<ImagePipelineStepBase::weak_ptr> OrderedSteps;
+
 
 
       ImagePipeline();
@@ -86,10 +83,32 @@ namespace Stereo
       PipelineStepId add_node(ImagePipelineStepBase::shared_ptr node);
 
       /**
+       * @brief Given a pipeline step pointer, find the pipeline ID for it.
+       * @param for_this_node the node to get the ID for
+       * @return the step id.
+       *
+       * Sadly, once a pointer goes into the graph, it gets an ID type that is upstream-dependent
+       * on the type itself. This means an object of that type can't use its own ID (since there's
+       * no good way to define the processing step as having access to that type)
+       *
+       * It can get this type at runtime, though, so that enables the pipeline steps to take advantage
+       * of the upstream graph if they need to find out properties (and enables us to use this convenient
+       * method for a better interface)
+       */
+      PipelineStepId id_for_pipeline_step_ptr(const ImagePipelineStepBase* const for_this_node) const;
+
+      /**
        * Construct the processing step dependency, such that the output of prerequisite will be fed into the
        * input of dependant when the processing DAG is evaluated.
        */
       void add_dependency(PipelineStepId dependant, PipelineStepId prerequisite);
+
+      /**
+       * @brief Get dependencies for a given node.
+       * @param for_this_node the node to get the dependencies for
+       * @return a list of weak pointers to the dependencies.
+       */
+      OrderedSteps get_dependencies(const ImagePipelineStepBase* for_this_node) const;
 
       /**
        * Build the topologically-sorted dependency list.
@@ -112,6 +131,16 @@ namespace Stereo
       static ImagePipeline load(std::string filename);
 
       DependencyGraph m_graph;
+      // This map allows us to look at a step from the "outside" not as an ID and get its
+      // associated graph id for graph ops.
+
+      // When looking for dependencies, this is the type of iterator returned
+      typedef boost::graph_traits<DependencyGraph>::out_edge_iterator dependencies_iter;
+      // When looking for a set of dependencies, this is the range type returned.
+      typedef std::pair<dependencies_iter, dependencies_iter> dependency_iter_range;
+
+      typedef std::unordered_map<const ImagePipelineStepBase*, PipelineStepId> reverse_map;
+      reverse_map m_reverse_map;
 
     };
 

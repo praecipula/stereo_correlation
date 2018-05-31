@@ -24,6 +24,9 @@ namespace Stereo
         */
         PipelineStepId id = add_vertex(this->m_graph);
         // Insert the value of the shared ptr's address as the key to get the id later if needed
+        // TODO: I now think I prefer putting the id as a void pointer in the ImagePipelineStepBase.
+        // Then we can static_cast it here to the right opaque type. We should document well (or maybe
+        // allow access only via friend class) that this is what it's for and here there be monsters.
         this->m_reverse_map.insert(std::make_pair(node.get(), id));
         // Set the processing step in the node properties
         this->m_graph[id].processing_step = node;

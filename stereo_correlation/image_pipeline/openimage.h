@@ -13,7 +13,7 @@ namespace Stereo
     class OpenImage : public ImagePipelineStepBase
     {
     public:
-        typedef std::shared_ptr<OpenImage> shared_ptr;
+        typedef std::shared_ptr<OpenImage> ptr;
 
         static const std::string s_key;
         static const std::string s_version;
@@ -36,6 +36,7 @@ namespace Stereo
         virtual std::string describe() const;
         virtual void execute(const ImagePipeline& pipeline);
         virtual std::string key() const {return OpenImage::s_key;}
+        virtual std::string version() const {return OpenImage::s_version;}
         static ImagePipelineStepBase::shared_ptr load(memo metadata);
 
     protected:

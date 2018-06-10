@@ -23,7 +23,8 @@ namespace Stereo
             know that dereferencing is safe and should use the returned ID.
         */
         PipelineStepId id = add_vertex(this->m_graph);
-        // Insert the value of the shared ptr's address as the key to get the id later if needed
+        // Insert the value of the shared ptr's address as the key to get the id later if needed.
+
         this->m_reverse_map.insert(std::make_pair(node.get(), id));
         // Set the processing step in the node properties
         this->m_graph[id].processing_step = node;
@@ -35,8 +36,9 @@ namespace Stereo
         try {
             return m_reverse_map.at(for_this_node);
         } catch (const std::range_error& e) {
+            // TODO: recover from this maybe? Kill the whole graph and reload from the last save?
             std::stringstream sstr;
-            sstr << "Pointer to processing step missing from pipeline reverse lookup map " << for_this_node;
+            sstr << "Pointer to processing step missing from pipeline reverse lookup map: " << for_this_node;
             STEREO_LOG_ASSERT(false, sstr.str());
         }
     }
@@ -112,10 +114,10 @@ namespace Stereo
 
     std::string ImagePipeline::serialize() const
     {
-        std::string serialized;
+        std::stringstream serialize_stream;
         pt::ptree tree = this->prepare_to_serialize();
-        pt::write_json(serialized, tree);
-        return serialized;
+        pt::write_json(serialize_stream, tree);
+        return serialize_stream.str();
     }
 
     void ImagePipeline::save(std::string filename)

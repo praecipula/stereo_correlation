@@ -2,8 +2,12 @@
 
 namespace Stereo
 {
-    ImagePipelineStepBase::ImagePipelineStepBase()
-    {}
+    ImagePipelineStepBase::ImagePipelineStepBase(std::string subclass_key, std::string subclass_version)
+    {
+        memo data;
+        data.put("version", subclass_version);
+        m_metadata.add_child(subclass_key, data);
+    }
 
     ImagePipelineStepBase::ImagePipelineStepBase(const memo &metadata):
         m_metadata(metadata)

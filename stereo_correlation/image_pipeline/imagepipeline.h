@@ -91,9 +91,13 @@ namespace Stereo
        * on the type itself. This means an object of that type can't use its own ID (since there's
        * no good way to define the processing step as having access to that type)
        *
-       * It can get this type at runtime, though, so that enables the pipeline steps to take advantage
+       * It's possible to get this at runtime, though, so that enables the pipeline steps to take advantage
        * of the upstream graph if they need to find out properties (and enables us to use this convenient
-       * method for a better interface)
+       * method for a better interface).
+       *
+       * We also consider the graph to own its nodes and only return weak pointers to them, so since this
+       * structure already controls the scope of this data, we can be sure that the smart pointer won't
+       * deallocate until the whole graph deallocates, at least in theory.
        */
       PipelineStepId id_for_pipeline_step_ptr(const ImagePipelineStepBase* const for_this_node) const;
 

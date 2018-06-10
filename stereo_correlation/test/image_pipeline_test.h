@@ -48,11 +48,10 @@ struct RememberNumber : public ImagePipelineStepBase
         "version": "1.0"
     }
     */
-    RememberNumber(int num) {
-        memo data;
-        data.put("number", num);
-        data.put("version", RememberNumber::s_version);
-        m_metadata.add_child(this->key(), data);
+    RememberNumber(int num) :
+        ImagePipelineStepBase(this->key(), this->version())
+    {
+        this->mutable_data().put("number", num);
     }
     //Memo "copy constructor" passed to super
     RememberNumber(memo meta): ImagePipelineStepBase(meta) {}
@@ -64,6 +63,8 @@ struct RememberNumber : public ImagePipelineStepBase
     // Basically a no-op of the inputs.
     void execute(const ImagePipeline& graph){return;}
     virtual std::string key() const {return RememberNumber::s_key;}
+    virtual std::string version() const {return RememberNumber::s_version;}
+    ImagePipelineStepBase::memo& mutable_data() {return this->m_metadata.get_child(this->key());}
 
     // Accessors should reach into the metadata memo to get any property that
     // needs to be persisted (local or memoized data is fine to not put in the memo)

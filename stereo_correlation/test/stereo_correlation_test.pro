@@ -102,10 +102,10 @@ strcon.cpp \
 metatyperegistration.cpp \
 reticle.cpp \
 image_pipeline/imagepipelinestepbase.cpp \
-image_pipeline/saveimage.cpp \
 imageprocessingview.cpp \
 image_pipeline/imagepipeline.cpp \
 image_pipeline/openimage.cpp \
+image_pipeline/saveimage.cpp \
 image_pipeline/guiimagepipelinebuilder.cpp \
 model/workspace.cpp \
 model/coordinate.cpp \
@@ -165,7 +165,10 @@ model/pointcloud.h \
     ../utility/tostringable.h \
     camera_calibration_test.h \
     image_pipeline_test.h \
-    openimage_test.h
+    openimage_test.h \
+    ../image_pipeline/pipelinestepacceptingimage.h \
+    saveimage_test.h \
+    ../stereoexception.h
 
 FORMS    += forms/stereocorrelation.ui \
 forms/imageprocessingview.ui

@@ -17,6 +17,7 @@ namespace Stereo
     public:
 
         // The pipeline is assembled as a std List or Vector (anything forward iterable) of these pointers.
+        // TODO: consider changing this to ptr instead of shared_ptr to fit conventions
         typedef std::shared_ptr<ImagePipelineStepBase> shared_ptr;
         typedef std::weak_ptr<ImagePipelineStepBase> weak_ptr;
 
@@ -24,12 +25,10 @@ namespace Stereo
         typedef boost::property_tree::ptree memo;
 
         /*
-        * All image pipeline steps must be default-constructable AND copy-constructable.
-        * This class is always default-constructable as an abstract class.
         * Any further information needed to execute must be supplied
         * after construction and before execution
         */
-        ImagePipelineStepBase();
+        ImagePipelineStepBase(std::string subclass_key, std::string subclass_version);
         ImagePipelineStepBase(const memo& metadata);
         virtual ~ImagePipelineStepBase() {}
 
@@ -89,6 +88,13 @@ namespace Stereo
         * The point of making it pure virtual is to remind subclasses to do this.
         */
         virtual std::string key() const = 0;
+
+        /**
+         * @brief The subclass-specific version for the operstion
+         * @return The version. This is a static member, but each class is expected to
+         * implement this as a basic return of this static member
+         */
+        virtual std::string version() const = 0;
 
 
     protected:

@@ -14,17 +14,17 @@ namespace Stereo
     const std::string OpenImage::s_version = "1.0";
 
     OpenImage::OpenImage(const std::string& imageFilename):
-        ImagePipelineStepBase(this->key(), this->version())
+        ImagePipelineStepWithCommonImpl(this->key(), this->version())
     {
         this->mutable_data().put("filename", imageFilename);
     }
 
     OpenImage::OpenImage(const memo& metadata):
-        ImagePipelineStepBase(metadata)
+        ImagePipelineStepWithCommonImpl(metadata)
     {}
 
     OpenImage::OpenImage(const OpenImage &other):
-        ImagePipelineStepBase(other.m_metadata)
+        ImagePipelineStepWithCommonImpl(other.m_metadata)
     {}
 
     std::string OpenImage::filename() const
@@ -79,8 +79,5 @@ namespace Stereo
         this->set_checksum(image->crc());
     }
 
-    static ImagePipelineStepBase::shared_ptr load(ImagePipelineStepBase::memo metadata)
-    {
-        return OpenImage::ptr(new OpenImage(metadata));
-    }
+
 }

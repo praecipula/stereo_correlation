@@ -32,10 +32,8 @@ protected:
  * This is a good place to see a reference implementation that does the
  * smallest possible compatible thing as its interface
  */
-struct RememberNumber : public ImagePipelineStepBase
+struct RememberNumber : public ImagePipelineStepWithCommonImpl<RememberNumber>
 {
-    // Simplifying typedef
-    typedef std::shared_ptr<RememberNumber> shared_ptr;
     // Every impl should have these static strings.
     // Version is a number to enable semver with multiple decimals.
     static const std::string s_key;
@@ -49,12 +47,12 @@ struct RememberNumber : public ImagePipelineStepBase
     }
     */
     RememberNumber(int num) :
-        ImagePipelineStepBase(this->key(), this->version())
+        ImagePipelineStepWithCommonImpl(this->key(), this->version())
     {
         this->mutable_data().put("number", num);
     }
     //Memo "copy constructor" passed to super
-    RememberNumber(memo meta): ImagePipelineStepBase(meta) {}
+    RememberNumber(memo meta): ImagePipelineStepWithCommonImpl(meta) {}
     virtual std::string describe() const {
         std::stringstream stream;
         stream << this->key() << ": " << this->number();
@@ -62,21 +60,10 @@ struct RememberNumber : public ImagePipelineStepBase
     }
     // Basically a no-op of the inputs.
     void execute(const ImagePipeline& graph){return;}
-    virtual std::string key() const {return RememberNumber::s_key;}
-    virtual std::string version() const {return RememberNumber::s_version;}
-    ImagePipelineStepBase::memo& mutable_data() {return this->m_metadata.get_child(this->key());}
 
     // Accessors should reach into the metadata memo to get any property that
     // needs to be persisted (local or memoized data is fine to not put in the memo)
     int number() const {return this->data().get<int>("number");}
-    // Each class has to implement a load method, but they'll almost always look
-    // like this with a subclassed type of shared_ptr
-    static ImagePipelineStepBase::shared_ptr load(ImagePipelineStepBase::memo metadata)
-    {
-        return RememberNumber::shared_ptr(new RememberNumber(metadata));
-    }
-
-    ImagePipelineStepBase::memo data() const {return this->m_metadata.get_child(this->key());}
 };
 // Finally, need to define the constants.
 const std::string RememberNumber::s_key = "remember_number";

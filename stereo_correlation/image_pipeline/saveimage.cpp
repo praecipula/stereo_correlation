@@ -9,21 +9,21 @@ namespace Stereo
     const std::string SaveImage::s_version = "1.0";
 
     SaveImage::SaveImage():
-        ImagePipelineStepBase(this->key(), this->version()), PipelineStepAcceptingImage()
+        ImagePipelineStepWithCommonImpl(this->key(), this->version()), PipelineStepAcceptingImage()
     {}
 
     SaveImage::SaveImage(const std::string& imageFilename):
-        ImagePipelineStepBase(this->key(), this->version()), PipelineStepAcceptingImage()
+        ImagePipelineStepWithCommonImpl(this->key(), this->version()), PipelineStepAcceptingImage()
     {
         this->mutable_data().put("filename", imageFilename);
     }
 
     SaveImage::SaveImage(const memo& metadata):
-        ImagePipelineStepBase(metadata), PipelineStepAcceptingImage()
+        ImagePipelineStepWithCommonImpl(metadata), PipelineStepAcceptingImage()
     {}
 
     SaveImage::SaveImage(const SaveImage &other):
-        ImagePipelineStepBase(other.m_metadata), PipelineStepAcceptingImage(other.get_image())
+        ImagePipelineStepWithCommonImpl(other.m_metadata), PipelineStepAcceptingImage(other.get_image())
     {}
 
     std::string SaveImage::filename() const

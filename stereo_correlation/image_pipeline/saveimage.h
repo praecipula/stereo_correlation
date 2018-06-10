@@ -13,11 +13,10 @@ namespace Stereo
     /*
      * SaveImage will, given a filename, save an image to the filesystem.
      */
-    class SaveImage: public ImagePipelineStepBase, public PipelineStepAcceptingImage
+    class SaveImage: public ImagePipelineStepWithCommonImpl<SaveImage>,
+            public PipelineStepAcceptingImage
     {
     public:
-        typedef std::shared_ptr<SaveImage> ptr;
-
         static const std::string s_key;
         static const std::string s_version;
 
@@ -32,17 +31,9 @@ namespace Stereo
 
         std::string filename() const;
 
-        // Return a const copy of the metadata under the key for quick property inspection.
-        ImagePipelineStepBase::memo data() const {return this->m_metadata.get_child(this->key());}
-
         virtual std::string describe() const;
         virtual void execute(const ImagePipeline& pipeline);
-        virtual std::string key() const {return SaveImage::s_key;}
-        virtual std::string version() const {return SaveImage::s_version;}
-        static ImagePipelineStepBase::shared_ptr load(memo metadata);
-
     protected:
-        ImagePipelineStepBase::memo& mutable_data() {return this->m_metadata.get_child(this->key());}
     };
 
     class SaveImageNoFilenameException : public AssertionFailure

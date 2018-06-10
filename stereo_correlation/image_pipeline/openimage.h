@@ -10,11 +10,9 @@ namespace Stereo
      *
      * Open the image and deliver it to ImageMagick so that it can operate on the image.
      */
-    class OpenImage : public ImagePipelineStepBase
+    class OpenImage : public ImagePipelineStepWithCommonImpl<OpenImage>
     {
     public:
-        typedef std::shared_ptr<OpenImage> ptr;
-
         static const std::string s_key;
         static const std::string s_version;
 
@@ -30,21 +28,11 @@ namespace Stereo
         typedef std::string hex_string;
         hex_string checksum() const;
 
-        // Return a const copy of the metadata under the key for quick property inspection.
-        ImagePipelineStepBase::memo data() const {return this->m_metadata.get_child(this->key());}
-
         virtual std::string describe() const;
         virtual void execute(const ImagePipeline& pipeline);
-        virtual std::string key() const {return OpenImage::s_key;}
-        virtual std::string version() const {return OpenImage::s_version;}
-        static ImagePipelineStepBase::shared_ptr load(memo metadata);
 
     protected:
         void set_checksum(const Algo::ImageBase::checksum& sum);
-        // Return a mutable reference to the data under the key for quick property inspection.
-        // This helps a lot in cases where we accidentally would put() to the data returned from the
-        // const version, which is a copy for the outside world to prevent dangling references.
-        ImagePipelineStepBase::memo& mutable_data() {return this->m_metadata.get_child(this->key());}
     };
 
 }

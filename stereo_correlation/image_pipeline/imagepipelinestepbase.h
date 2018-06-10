@@ -101,5 +101,40 @@ namespace Stereo
         memo m_metadata;
     };
 
+    /**
+     * A CRTP class to implement some of the common functionality, like defining the key, version, etc...
+     */
+    template <typename T>
+    class ImagePipelineStepWithCommonImpl : public ImagePipelineStepBase
+    {
+    public:
+        typedef std::shared_ptr<T> ptr;
+
+
+        ImagePipelineStepWithCommonImpl(std::string subclass_key, std::string subclass_version):
+            ImagePipelineStepBase(subclass_key, subclass_version) {}
+        ImagePipelineStepWithCommonImpl(const memo& metadata):
+            ImagePipelineStepBase(metadata) {}
+        virtual ~ImagePipelineStepWithCommonImpl(){}
+        // Standard info for JSON properties
+        virtual std::string key() const {return T::s_key;}
+        virtual std::string version() const {return T::s_version;}
+
+        /**
+         * @brief load
+         * @param metadata
+         * @return
+         */
+        static ImagePipelineStepBase::shared_ptr load(ImagePipelineStepBase::memo metadata)
+        {
+            return T::ptr(new T(metadata));
+        }
+
+        // Return a const copy of the metadata under the key for quick property inspection.
+        virtual ImagePipelineStepBase::memo data() const {return this->m_metadata.get_child(this->key());}
+    protected:
+        // Get a mutable version of the metadata. This is intended for internal impl of class accessors.
+        virtual ImagePipelineStepBase::memo& mutable_data() {return this->m_metadata.get_child(this->key());}
+    };
 }
 #endif // IMAGEPIPELINESTEPBASE_H

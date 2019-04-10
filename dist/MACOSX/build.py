@@ -20,7 +20,7 @@ class Otool(object):
 "(?P<load_key>Load command)\s(?P<load_num>\d+)\n"
 "\s+(?P<command_key>cmd)\s(?P<command_str>\w+)\n"
 "\s+(?P<size_key>cmdsize)\s(?P<size_num>\d+)\n"
-"\s+(?P<name_key>name)\s(?P<name_str>[a-zA-Z\s\/\.]+).*\n"
+"\s+(?P<name_key>name)\s(?P<name_str>[a-zA-Z\s\/\.0-9]+).*\n"
 "\s+(?P<time_stamp_key>time stamp)\s(?P<time_stamp_str>.*)\n"
 "\s+(?P<version_key>current version)\s(?P<version_str>[0-9\.]+)\n"
 "(?P<compat_key>compatibility version)\s(?P<compat_str>[0-9\.]+)\n"
@@ -45,8 +45,9 @@ class Otool(object):
     def list_deps(self):
         blocks = self.split_load_commands()
         for block in blocks:
-            if Otool.block_regex.search(block):
-                print(block)
+            match = Otool.block_regex.search(block)
+            if match and match.groupdict().has_key('name_key'):
+                print match.groupdict()['name_str']
 
     def run_tool(self):
         return subprocess.check_output(['otool', '-l', self._binary])

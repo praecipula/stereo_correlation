@@ -15,6 +15,7 @@ import re
 
 class Otool(object):
     split_block_regex = re.compile("(Load command)")
+
     block_regex = re.compile(
 "(?P<load_key>Load command)\s(?P<load_num>\d+)\n"
 "\s+(?P<command_key>cmd)\s(?P<command_str>\w+)\n"
@@ -31,12 +32,28 @@ class Otool(object):
     def __init__(self, binary):
         self._binary = binary
 
+    def split_load_commands(self):
+        output = self.run_tool()
+        # Split on the split regex
+        blocks = []
+        parsed_block_text = Otool.split_block_regex.split(output)
+        parsed_block_text.pop(0)
+        for i,k in zip(parsed_block_text[0::2], parsed_block_text[1::2]):
+            blocks.append(i + k)
+        return blocks
+
     def list_deps(self):
-        output = subprocess.check_output(['otool', '-l', self._binary])
-        matches = Otool.block_regex.search(output)
-        print matches.groups()
+        blocks = self.split_load_commands()
+        for block in blocks:
+            if Otool.block_regex.search(block):
+                print(block)
+
+    def run_tool(self):
+        return subprocess.check_output(['otool', '-l', self._binary])
+
 
 
 if __name__ == "__main__":
-    ot = Otool('./Boost.framework/Libraries/libboost_filesystem.dylib')
+    ot = Otool('./OpenCV.framework/Libraries/libopencv_world.3.4.dylib')
+    ot.split_load_commands()
     ot.list_deps()

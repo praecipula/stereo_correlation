@@ -27,6 +27,15 @@ make_link_to_library () {
   popd &> /dev/null
 }
 
+copy_brew_and_otool_lib () {
+  FILE=$1
+  BASE=$(basename $FILE)
+  LIB=$2
+  DEST=$3
+
+  sudo install_name_tool -change "$FILE" "@rpath/$BASE" $OCF/OpenCV
+  sudo cp $FILE $LGP2
+}
 
 if $MAKE_BOOST
 then
@@ -216,24 +225,18 @@ then
   # libgphoto2
   LGP2="$OCFLIB/gphoto2/lib/"
   mkdir -p $LGP2
-  cp /usr/local/opt/libgphoto2/lib/libgphoto2.6.dylib $LGP2
-  cp /usr/local/opt/libgphoto2/lib/libgphoto2_port.12.dylib $LGP2
-  install_name_tool -change "/usr/local/opt/libgphoto2/lib/libgphoto2.6.dylib" "@rpath/libgphoto2.6.dylib" $OCF/OpenCV
-  install_name_tool -change "/usr/local/opt/libgphoto2/lib/libgphoto2_port.12.dylib" "@rpath/libgphoto2_port.12.dylib"  $OCF/OpenCV
+  copy_brew_and_otool_lib /usr/local/opt/libgphoto2/lib/libgphoto2.*.dylib $OCF/OpenCV $LGP2
+  copy_brew_and_otool_lib /usr/local/opt/libgphoto2/lib/libgphoto2_port.*.dylib $OCF/OpenCV $LGP2
+  # This path is set at the time we built opencv. I don't like this hardcoded solution :(
   install_name_tool -rpath "/usr/local/Cellar/libgphoto2/2.5.9/lib" "@loader_path/gphoto2/lib" $OCF/OpenCV
   # ffmpeg
   LFMP="$OCFLIB/ffmpeg/lib/"
   mkdir -p $LFMP
-  cp /usr/local/opt/ffmpeg/lib/libavcodec.57.dylib $LFMP
-  cp /usr/local/opt/ffmpeg/lib/libavformat.57.dylib $LFMP
-  cp /usr/local/opt/ffmpeg/lib/libavutil.55.dylib  $LFMP
-  cp /usr/local/opt/ffmpeg/lib/libswscale.4.dylib  $LFMP
-  cp /usr/local/opt/ffmpeg/lib/libavresample.3.dylib  $LFMP
-  install_name_tool -change "/usr/local/opt/ffmpeg/lib/libavcodec.57.dylib" "@rpath/libavcodec.57.dylib" $OCF/OpenCV
-  install_name_tool -change "/usr/local/opt/ffmpeg/lib/libavformat.57.dylib" "@rpath/libavformat.57.dylib" $OCF/OpenCV
-  install_name_tool -change "/usr/local/opt/ffmpeg/lib/libavutil.55.dylib" "@rpath/libavutil.55.dylib" $OCF/OpenCV
-  install_name_tool -change "/usr/local/opt/ffmpeg/lib/libswscale.4.dyliblib" "@rpath/libswscale.4.dylib" $OCF/OpenCV
-  install_name_tool -change "/usr/local/opt/ffmpeg/lib/libavresample.3.dylib" "@rpath/libavresample.3.dylib" $OCF/OpenCV
+  copy_brew_and_otool_lib /usr/local/opt/ffmpeg/lib/libavcodec.*.dylib $OCF/OpenCV $LFMP
+  copy_brew_and_otool_lib /usr/local/opt/ffmpeg/lib/libavformat.*.dylib $OCF/OpenCV $LFMP
+  copy_brew_and_otool_lib /usr/local/opt/ffmpeg/lib/libavutil.*.dylib $OCF/OpenCV $LFMP
+  copy_brew_and_otool_lib /usr/local/opt/ffmpeg/lib/libswscale.*.dylib $OCF/OpenCV $LFMP
+  copy_brew_and_otool_lib /usr/local/opt/ffmpeg/lib/libavresample.*.dylib $OCF/OpenCV $LFMP
   install_name_tool -rpath "/usr/local/Cellar/ffmpeg/3.0.1/lib" "@loader_path/ffmpeg/lib" $OCF/OpenCV
 
   # This seems to be superfluous based on build dir. Ehh.

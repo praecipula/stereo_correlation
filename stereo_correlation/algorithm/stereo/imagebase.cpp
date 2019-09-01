@@ -21,7 +21,7 @@ namespace Stereo
         {
             Mat viewGray;
             //TODO: Assumption about source colorspace here. We should track that in this object.
-            cv::cvtColor(*this, viewGray, CV_BGR2GRAY);
+            cv::cvtColor(*this, viewGray, COLOR_BGR2GRAY);
             return make_shared<ImageBase>(viewGray);
         }
 

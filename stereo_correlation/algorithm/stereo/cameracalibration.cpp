@@ -81,7 +81,7 @@ namespace Stereo
                     // Loop over scales (smaller scales are better, larger scales are more accurate) until we find the image
                     // Pass it to findChessboardCorners, which does a fast check
                     patternFound = cv::findChessboardCorners(*scaled, patternSize, corners,
-                                                             CALIB_CB_ADAPTIVE_THRESH + CV_CALIB_CB_FAST_CHECK);
+                                                             CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_FAST_CHECK);
                     // If we found the pattern
                     if(!patternFound)
                     {
@@ -109,7 +109,7 @@ namespace Stereo
                     // is constant - so the neighborhood of error will have scaled). Note that there's integer floor-ing at 1,
                     // so we never *actually* go smaller than the specified window here.
                     cv::cornerSubPix(*pGray, unscaledCorners, Size(10, 10) * fraction/2, Size(-1, -1),
-                               TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+                               TermCriteria(TermCriteria::EPS + TermCriteria::MAX_ITER, 30, 0.1));
                 }
                 // Draw and display the image. We do this even if we don't get a pattern, because it can sometimes draw some of the points.
                 cv::drawChessboardCorners(*pColor, patternSize, Mat(unscaledCorners), patternFound);
@@ -149,7 +149,7 @@ namespace Stereo
                 double distortionError = cv::calibrateCamera(objectPoints, imageCornerPoints,  pColor->size(),
                                                              results->cameraMatrixK, results->distortionCoefficientsD,
                                                              results->rotationVectorsPerImage, results->translationVectorsPerImage,
-                                                             CV_CALIB_RATIONAL_MODEL);
+                                                             CALIB_RATIONAL_MODEL);
                 results->reprojectionError = distortionError;
                 LOGI << results->cameraMatrixK;
                 LOGI << results->distortionCoefficientsD;

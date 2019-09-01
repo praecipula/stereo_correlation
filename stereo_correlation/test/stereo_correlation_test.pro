@@ -10,14 +10,14 @@ QT_CONFIG -= no-pkg-config
 
 CONFIG += c++11
 
+QMAKE_MAC_SDK = macosx10.13
+
 TARGET = stereo_correlation
 TEMPLATE = app
 
 # Use homebrew's ImageMagick++ libraries. In future, perhaps build and distribute alongside.
 PKG_CONFIG = PKG_CONFIG_PATH=/usr/local/lib/pkgconfig /usr/local/bin/pkg-config
 CONFIG += link_pkgconfig
-PKGCONFIG = ImageMagick++
-
 
 
 # This is only a test.
@@ -48,7 +48,10 @@ macx {
         FRAMEWORKS = $$1
         for(FRAMEWORK, FRAMEWORKS) {
             FRAMEWORKDEST = $$BFRAMEWORK_DIR/$$FRAMEWORK
-            !exists($$FRAMEWORKDEST) {
+            exists($$FRAMEWORKDEST) {
+                message("$$FRAMEWORKDEST exists")
+            } else {
+                message("$$FRAMEWORKDEST does not exist")
                 prebuildcopytarget.commands += $$QMAKE_COPY_DIR $$quote($$DIST_DIR/$$FRAMEWORK) $$quote($$BFRAMEWORK_DIR) $$escape_expand(\\n\\t)
             }
         }
@@ -71,18 +74,26 @@ macx {
 }
 
 INCLUDEPATH += ../../thirdparty/include \
-../../thirdparty/include/jsoncpp/dist\
 
-QMAKE_CXXFLAGS += -isystem ../../thirdparty/include \
-../../thirdparty/include/jsoncpp/dist
+QMAKE_CXXFLAGS += -isystem ../../thirdparty/include
 QMAKE_CXXFLAGS += -I$$quote($$BFRAMEWORK_DIR/OpenCV.framework/Headers)
+QMAKE_CXXFLAGS += -I$$quote($$BFRAMEWORK_DIR/Boost.framework/Headers)
 
 # Add an rpath for framework libs
 QMAKE_LFLAGS += '-Wl,-rpath,@loader_path/../Frameworks'
 
+# Dependency note:
+# Boost,filesystem depends on boost.system, but it needs its dependency resolution updated based on our naming / organizational structure.
+# Including it as a -framework option causes it to try to resolve to the old dylib at @rpath/boost_system.dylib, which will be reflected
+# in the resulting executable.
+# To fix this manually, run
+# install_name_tool -change "@rpath/libboost_system.dylib" "@rpath/../Frameworks/Boost.framework/Libraries/libboost_system.dylib" ./stereo_correlation
+# Dependency note:
+# OpenCV requires libavcodec from ffmpeg; similar to the above, run
+# install_name_tool -change "/usr/local/opt/ffmpeg/lib/libavcodec.57.dylib" "@rpath/../Frameworks/OpenCV.framework/Libraries/ffmpeg/lib/libavcodec.57.dylib" ./stereo_correlation
 LIBS += -F$$quote($$BFRAMEWORK_DIR/)
 LIBS += -framework Googletest -framework Googletest,main \
--framework Boost -framework Boost,system -framework Boost,filesystem \
+-framework Boost -framework Boost,filesystem \
 -framework ThreadingBuildingBlocks \
 -framework Log4CPlus \
 -framework Blosc \
@@ -91,13 +102,7 @@ LIBS += -framework Googletest -framework Googletest,main \
 -framework IlmBase
 
 
-SOURCES += jsoncpp.cpp\
-imagecamera2d.cpp \
-stereocorrelation.cpp \
-widgets/qleftimagecanvaswidget.cpp \
-widgets/qrightimagecanvaswidget.cpp \
-widgets/qimagecanvaswidget.cpp \
-widgets/qstereomeshwidget.cpp \
+SOURCES += imagecamera2d.cpp \
 strcon.cpp \
 metatyperegistration.cpp \
 reticle.cpp \
@@ -112,7 +117,6 @@ model/coordinate.cpp \
 model/pointcloud.cpp \
 algorithm/stereo/cameracalibration.cpp \
 algorithm/stereo/projectpoints.cpp \
-algorithm/stereo/disparity.cpp \
 algorithm/stereo/imagebase.cpp \
 model/stereo_hardware/camera.cpp \
 model/stereo_hardware/camerarelationship.cpp \
@@ -126,11 +130,6 @@ all_tests.cpp \ # Start with the tests now.
 
 HEADERS  += common.h \
 imagecamera2d.h \
-stereocorrelation.h \
-widgets/qleftimagecanvaswidget.h \
-widgets/qrightimagecanvaswidget.h \
-widgets/qimagecanvaswidget.h \
-widgets/qstereomeshwidget.h \
 strcon.h \
 metatyperegistration.h \
 reticle.h \
@@ -157,7 +156,6 @@ model/pointcloud.h \
     ../model/stereo_hardware/camerarelationship.h \
     ../algorithm/stereo/semiglobalblockmatching.h \
     ../algorithm/stereo/cameraimage.h \
-    ../algorithm/stereo/disparity.h \
     ../algorithm/stereo/imagebase.h \
     ../algorithm/stereo/projectpoints.h \
     ../algorithm/stereo/undistortedimage.h \
@@ -170,8 +168,6 @@ model/pointcloud.h \
     saveimage_test.h \
     ../stereoexception.h
 
-FORMS    += forms/stereocorrelation.ui \
-forms/imageprocessingview.ui
 
 # Copies the given files to the destination directory
 defineTest(copyToDestdir) {
@@ -204,6 +200,13 @@ defineTest(copyDirToDestdir) {
     export(QMAKE_POST_LINK)
 }
 
+defineTest(rewriteExecutableDependencyPaths) {
+    old = $$1
+    new = $$2
+    QMAKE_POST_LINK += $$quote( install_name_tool -change $$1 $$2 $$OUT_PWD/stereo_correlation.app/Contents/MacOS/stereo_correlation ;)
+    export(QMAKE_POST_LINK)
+}
+
 # Original assets
 copyToDestdir(../assets/reticle.png)
 
@@ -212,3 +215,9 @@ copyDirToDestdir(./assets/qtdistancefieldfonttexturegenerator_test)
 copyDirToDestdir(./assets/stereomesh_test)
 copyDirToDestdir(./assets/project_points_test)
 copyDirToDestdir(./assets/camera_calibration_test)
+
+#Rewrite the resolution of some dependencies that for some reason keep getting linked incorrectly
+rewriteExecutableDependencyPaths(@rpath/libboost_system.dylib @rpath/Boost.framework/Boost_system)
+rewriteExecutableDependencyPaths(@rpath/libopencv_world.4.1.dylib @rpath/OpenCV.framework/OpenCV)
+
+#    QMAKE_POST_LINK += $$quote( install_name_tool -change @rpath/libopencv_world.4.1.dylib @rpath/OpenCV.framework/OpenCV $$OUT_PWD/stereo_correlation.app/Contents/MacOS/stereo_correlation )

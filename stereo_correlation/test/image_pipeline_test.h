@@ -2,6 +2,7 @@
 #define IMAGE_PIPELINE_TEST
 
 #include <list>
+#include <typeinfo>
 #include <QCoreApplication>
 #include <opencv2/core.hpp>
 #include "image_pipeline/imagepipeline.h"
@@ -111,6 +112,15 @@ TEST_F(ImagePipelineTest, PipelineCanBeSavedToFile) {
     RememberNumber::shared_ptr num_one = RememberNumber::shared_ptr(new RememberNumber(1));
     FriendlyImagePipeline::PipelineStepId h_num_one = pipe.add_node(num_one);
     pipe.save("/tmp/pipetest.3dp");
+}
+
+TEST_F(ImagePipelineTest, PipelineStepIdsAreIntegers) {
+    // We make no assurances that the opaque PipelineStepId objects are ints.
+    // However, its a convenient shortcut in order to use them without having
+    // to recalculate some other integer id, presuming that this shortcut
+    // remains valid (which is what this is testing)
+
+    EXPECT_EQ(typeid(size_t), typeid(ImagePipeline::PipelineStepId));
 }
 
 TEST_F(ImagePipelineTest, PipelineCanBeDryRunned) {

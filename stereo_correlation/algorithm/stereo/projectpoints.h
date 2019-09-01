@@ -1,7 +1,6 @@
 #ifndef PROJECTPOINTS
 #define PROJECTPOINTS
 
-#include <opencv/cv.hpp>
 #include <exception>
 #include "disparity.h"
 #include "model/pointcloud.h"
@@ -11,7 +10,6 @@ namespace Stereo
 {
     namespace Algo
     {
-        using namespace cv;
 
         /**
          * Given a disparity map, project points into a 3d coordinate space.

@@ -7,10 +7,6 @@
 
 #include "image_pipeline/guiimagepipelinebuilder.h"
 
-namespace Ui {
-    class ImageProcessingView;
-}
-
 namespace Stereo
 {
 
@@ -27,13 +23,12 @@ namespace Stereo
     typedef std::map<std::string, GuiImagePipelineBuilder::fn_ptr> string_mapping;
 
     explicit ImageProcessingView(QWidget *parent = 0);
-    ~ImageProcessingView();
+    virtual ~ImageProcessingView();
 
     void populateAvailableSteps();
 
 
   private:
-    Ui::ImageProcessingView *ui;
     processing_steps m_stepsToExecute;
     processing_steps m_stepsAvailable;
     string_mapping m_stringMapping;

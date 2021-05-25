@@ -3,7 +3,7 @@
 | Hello, happy viewers!|
 |:--------------------:|
 
-While-I hope this document is interesting, it's also a fairly long spec for a program, so it's kinda a long slog. The far-reaching goal is to reconstruct 3D scene geometry from the stereo images. If you wish to skip the section about stereo image composition, start [at this heading](#a-performant-scalable-and-distributable-method-for-mesh-generation-and-sensor-fusion-for-point-clouds); to add context for the point cloud generation you can look just before it at the "Generation of 3D scene from disparity data" feature.
+While I hope this document is interesting, it's also a fairly long spec for a program, so it's kinda a long read. The far-reaching goal is to reconstruct 3D scene geometry from stereo images. If you wish to skip the section about stereo image composition, start [at this heading](#a-performant-scalable-and-distributable-method-for-mesh-generation-and-sensor-fusion-for-point-clouds); to add context for the point cloud generation you can look just before it at the "Generation of 3D scene from disparity data" feature.
 
 
 ------
